@@ -32,3 +32,11 @@ jobs:
               assert Path(src).is_file(), f'Missing JavaScript asset: {src}'
           PY
           node --check /tmp/lexora-inline.js
+      - name: Install browser test runner
+        run: |
+          npm install --no-save @playwright/test@1.56.1
+          npx playwright install --with-deps chromium
+      - name: Browser interaction smoke test
+        run: |
+          python -m http.server 4173 --bind 127.0.0.1 >/tmp/lexora-http.log 2>&1 &
+          npx playwright test tests/academy.spec.cjs --browser=chromium --workers=1
