@@ -49,3 +49,5 @@ async def main():
     print("Generated/verified",len(manifest),"curriculum clips and",len(alphabet),"alphabet clips")
 if __name__=="__main__":
     asyncio.run(main())
+
+# Changes to this generator trigger the audio-publishing workflow.
