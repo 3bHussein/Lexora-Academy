@@ -91,3 +91,17 @@ aside .lesson-submenu #summary{display:block}
 aside .brand{justify-content:flex-start!important;direction:ltr;flex-direction:row}
 aside .brand-caption{text-align:right!important}
 @media(max-width:720px){aside>button{width:100%!important;display:flex!important;margin:4px 0!important;padding:11px 13px!important}aside .lesson-submenu{display:none}body.on-lessons aside .lesson-submenu{display:block}aside .lesson-submenu #nav{display:flex!important;max-height:none!important;overflow-x:auto!important}aside .lesson-submenu #nav button{width:auto!important;flex-shrink:0}aside .brand{justify-content:center!important}aside .brand-caption{text-align:center!important}aside .menu-copy small{display:block}}
+
+.language-switch{display:flex;align-items:center;gap:9px;margin:0 4px 18px;padding:10px 12px;background:#15365c;border:1px solid #325477;border-radius:13px;color:#e6f1ff}
+.language-switch label{font-size:.83rem;font-weight:700}
+.language-switch select{margin-inline-start:auto;background:#092543;color:#fff;border:1px solid #53739a;border-radius:8px;padding:7px 10px;cursor:pointer;font:inherit}
+html[lang="en"] .hero-content,html[lang="en"] .hero-quote,html[lang="en"] .course-card,html[lang="en"] .stat-card{direction:ltr;text-align:left}
+html[lang="en"] .hero-content{margin-right:auto}
+html[lang="en"] .section-heading,html[lang="en"] .quick-card{direction:ltr;text-align:left}
+html[lang="en"] aside .menu-copy{text-align:left;align-items:flex-start}
+html[lang="en"] aside>button{direction:ltr;text-align:left}
+html[lang="en"] .brand-caption{text-align:left!important}
+html[lang="en"] .quick-arrow{margin-left:auto;margin-right:0}
+html[lang="en"] main:not(:has(.hero)){direction:ltr;text-align:left}
+html[lang="en"] main .ru{direction:ltr;text-align:left}
+@media(max-width:720px){.language-switch{margin:8px 0 12px}}
