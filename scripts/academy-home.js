@@ -3,31 +3,36 @@
 const $=s=>document.querySelector(s);
 const count=(key,max)=>{try{const v=JSON.parse(localStorage.getItem(key)||"[]");return Array.isArray(v)?new Set(v.filter(n=>Number.isInteger(n)&&n>=0&&n<max)).size:0}catch{return 0}};
 const courses=[
-["🔤","ابدأ من الصفر","الحروف الروسية والنطق وأول كلماتك","alphabetTab"],
-["📗","دروس A1","12 درسًا للمبتدئين","lessonsTab"],
-["📖","قراءة A1","4 نصوص وتدريبات","readingTab"],
-["📘","دروس A2","16 درسًا لتطوير اللغة","a2Tab"],
-["📄","قراءة A2","5 نصوص للفهم","a2ReadingTab"],
-["💬","محادثات A2","4 مواقف من الحياة اليومية","a2DialoguesTab"],
-["🎧","استماع A2","8 تمارين بالصوت الطبيعي","a2ListeningTab"],
-["📝","اختبار A2","16 سؤالًا مع مراجعة الأخطاء","a2ExamTab"]
+["📗","دروس A1","12 درسًا لتأسيس اللغة الروسية","lessonsTab","green"],
+["📄","قراءة A1","4 نصوص وتدريبات","readingTab","blue"],
+["📘","دروس A2","16 درسًا لتوسيع المعرفة","a2Tab","purple"],
+["📕","قراءة A2","5 نصوص متدرجة","a2ReadingTab","pink"],
+["💬","محادثات A2","4 محادثات واقعية","a2DialoguesTab","orange"],
+["🎧","استماع A2","8 تدريبات استماع","a2ListeningTab","teal"],
+["📋","اختبار A2","16 سؤالًا شاملًا","a2ExamTab","rose"],
+["📊","لوحة التقدم","تابع جميع إنجازاتك","dashboardTab","gold"]
 ];
 function showHome(){
   $("#nav").innerHTML="";
   const main=$("#lesson");main.replaceChildren();
   const hero=document.createElement("section");hero.className="hero";
-  hero.innerHTML='<h1>مرحبًا بك في<br><span>Lexora Academy</span></h1><p>ابدأ الروسية من الحروف الأولى، وتقدم خطوة بخطوة من A1 إلى A2. دروس مبسطة بالعربية، وتدريب كتابة وقراءة واستماع.</p><div class="hero-actions"><button id="heroStart">▶ ابدأ من الصفر</button><button id="heroProgress">📊 لوحة التقدم</button></div>';
+  hero.innerHTML='<div class="hero-content"><h1>مرحبًا بك في<br><span>Lexora Academy</span></h1><p>تعلم اللغة الروسية بطريقة منظمة وممتعة<br>من المستوى المبتدئ A1 إلى المستوى المتوسط A2</p><div class="hero-actions"><button id="heroStart">▶ &nbsp; متابعة التعلم</button><button id="heroProgress">▥ &nbsp; لوحة التقدم</button></div></div><div class="hero-quote"><p lang="ru">«Маленькие шаги<br>ведут к большим результатам.»</p><p>«الخطوات الصغيرة تقود إلى نتائج كبيرة.»</p></div>';
   main.append(hero);
   hero.querySelector("#heroStart").onclick=()=>$("#alphabetTab").click();
   hero.querySelector("#heroProgress").onclick=()=>$("#dashboardTab").click();
-  const title=document.createElement("h2");title.className="section-title";title.textContent="📈 رحلتك التعليمية";main.append(title);
   const stats=document.createElement("div");stats.className="stats-grid";
-  const values=[["📗","دروس A1",count("lexoraA1done",12),12],["📘","دروس A2",count("lexoraA2done",16),16],["🎧","استماع A2",count("lexoraA2listening",8),8],["💬","محادثات A2",count("lexoraA2dialogues",4),4]];
-  values.forEach(([icon,label,n,total])=>{const card=document.createElement("article");card.className="stat-card";card.innerHTML='<span class="stat-icon"></span><h3></h3><strong></strong><progress></progress>';card.querySelector(".stat-icon").textContent=icon;card.querySelector("h3").textContent=label;card.querySelector("strong").textContent=n+" / "+total+" مكتمل";card.querySelector("progress").max=total;card.querySelector("progress").value=n;stats.append(card)});main.append(stats);
-  const title2=document.createElement("h2");title2.className="section-title";title2.textContent="⭐ أقسام التعلم";main.append(title2);
+  const exam=(()=>{try{return JSON.parse(localStorage.getItem("lexoraA2exam")||"null")}catch{return null}})();
+  const values=[
+    ["📗","تقدم A1",count("lexoraA1done",12),12,"green"],
+    ["📘","تقدم A2",count("lexoraA2done",16),16,"purple"],
+    ["🎧","محادثات واستماع",count("lexoraA2listening",8)+count("lexoraA2dialogues",4),12,"orange"],
+    ["📋","آخر نتيجة في اختبار A2",exam?.score??0,16,"rose"]
+  ];
+  values.forEach(([icon,label,n,total,tone],i)=>{const card=document.createElement("article");card.className="stat-card tone-"+tone;card.innerHTML='<span class="stat-icon"></span><div class="stat-copy"><h3></h3><strong></strong></div><div class="stat-progress"><progress></progress><small></small></div>';card.querySelector(".stat-icon").textContent=icon;card.querySelector("h3").textContent=label;card.querySelector("strong").textContent=i===3&&!exam?"لم تُجرِ الاختبار":n+" / "+total+" مكتمل";card.querySelector("progress").max=total;card.querySelector("progress").value=n;card.querySelector("small").textContent=Math.round(n/total*100)+"%";stats.append(card)});main.append(stats);
+  const heading=document.createElement("div");heading.className="section-heading";heading.innerHTML='<h2>⭐ أقسام التعلم</h2><p>اختر القسم الذي تريد متابعته</p>';main.append(heading);
   const grid=document.createElement("div");grid.className="course-grid";
-  courses.forEach(([icon,name,desc,id])=>{const card=document.createElement("article");card.className="course-card";const ico=document.createElement("span");ico.className="course-icon";ico.textContent=icon;const h=document.createElement("h3");h.textContent=name;const p=document.createElement("p");p.textContent=desc;const button=document.createElement("button");button.textContent="ابدأ التعلم ←";button.onclick=()=>$("#"+id).click();card.append(ico,h,p,button);grid.append(card)});main.append(grid);
-  const footer=document.createElement("p");footer.className="meta";footer.textContent="تقدمك محفوظ على هذا الجهاز. استخدم نسخ واستعادة التقدم لنقله إلى جهاز آخر.";main.append(footer);
+  courses.forEach(([icon,name,desc,id,tone])=>{const card=document.createElement("article");card.className="course-card tone-"+tone;const ico=document.createElement("span");ico.className="course-icon";ico.textContent=icon;const h=document.createElement("h3");h.textContent=name;const p=document.createElement("p");p.textContent=desc;const button=document.createElement("button");button.textContent="ابدأ التعلم ❯";if(id==="readingTab"||id==="a2ReadingTab")button.textContent="ابدأ القراءة ❯";if(id==="a2ListeningTab")button.textContent="ابدأ الاستماع ❯";if(id==="dashboardTab")button.textContent="عرض التقدم ❯";if(id==="a2ExamTab")button.textContent="ابدأ الاختبار ❯";button.onclick=()=>$("#"+id).click();card.append(ico,h,p,button);grid.append(card)});main.append(grid);
+  const quick=document.createElement("div");quick.className="quick-grid";[["☁️","نسخ واستعادة التقدم","قم بتصدير تقدمك أو استعادته على جهاز آخر","backupTab"],["⚙️","البداية من الصفر","ابدأ بالحروف الروسية والنطق قبل الدروس","alphabetTab"]].forEach(([icon,title,desc,id])=>{const button=document.createElement("button");button.className="quick-card";button.innerHTML='<span class="quick-icon"></span><span class="quick-copy"><strong></strong><small></small></span><span class="quick-arrow">❯</span>';button.querySelector(".quick-icon").textContent=icon;button.querySelector("strong").textContent=title;button.querySelector("small").textContent=desc;button.onclick=()=>$("#"+id).click();quick.append(button)});main.append(quick);
 }
 function showAlphabet(){
   $("#nav").innerHTML="";const main=$("#lesson");main.replaceChildren();
