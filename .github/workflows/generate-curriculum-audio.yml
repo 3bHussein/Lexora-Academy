@@ -1,0 +1,36 @@
+name: Generate Russian curriculum audio
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - scripts/generate_curriculum_audio.py
+permissions:
+  contents: write
+jobs:
+  generate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: python -m pip install -r requirements-audio.txt
+      - name: Generate neural MP3 audio
+        run: python scripts/generate_curriculum_audio.py
+      - name: Verify manifests
+        run: |
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          for f,variable,min_count in [('alphabet-neural-audio.js','LEXORA_ALPHABET_AUDIO',33),('curriculum-neural-audio.js','LEXORA_CURRICULUM_AUDIO',50)]:
+              d=json.loads(Path(f).read_text(encoding='utf8').removeprefix('window.'+variable+' = ').rstrip(';\n '))
+              assert len(d)>=min_count,(f,len(d))
+              assert all(Path(p).exists() and Path(p).stat().st_size>1000 for p in d.values())
+          PY
+      - name: Publish verified audio
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add audio/neural/letter-*.mp3 audio/neural/curriculum-*.mp3 alphabet-neural-audio.js curriculum-neural-audio.js
+          git diff --cached --quiet || (git commit -m "Publish neural Russian curriculum speech" && git push)
