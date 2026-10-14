@@ -15,6 +15,7 @@ function fileFor(phrase){
 function addAudio(root){
  const elements=root.querySelectorAll?.(".ru,[lang='ru'],.vocab-card strong,.alphabet-card strong,.alphabet-card .alphabet-letter")||[];
  for(const el of elements){
+  if(el.matches("button, option") || el.closest(".alphabet-quiz"))continue;
   if(el.dataset.audioBound)continue;
   el.dataset.audioBound="1";
   const phrase=el.textContent.trim();
