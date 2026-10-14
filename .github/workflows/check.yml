@@ -58,13 +58,13 @@ jobs:
               ('curriculum-neural-audio.js','LEXORA_CURRICULUM_AUDIO',169)
           ]:
               raw=Path(name).read_text(encoding='utf-8')
-              items=json.loads(raw.removeprefix('window.'+variable+' = ').rstrip(';\\n '))
+              items=json.loads(raw.removeprefix('window.'+variable+' = ').rstrip(';\n '))
               assert len(items)>=minimum,(name,len(items))
               for phrase,asset in items.items():
                   path=Path(asset)
                   assert path.is_file(),f'Missing audio: {phrase}: {asset}'
                   assert path.stat().st_size>1000,f'Empty audio: {asset}'
-                  assert path.read_bytes()[:3]==b'ID3' or path.read_bytes()[:2] in (b'\\xff\\xfb',b'\\xff\\xf3',b'\\xff\\xf2'),f'Invalid MP3: {asset}'
+                  assert path.read_bytes()[:3]==b'ID3' or path.read_bytes()[:2] in (b'\xff\xfb',b'\xff\xf3',b'\xff\xf2'),f'Invalid MP3: {asset}'
               print(f'{name}: {len(items)} validated audio recordings')
           PY
       - name: Install browser test runner
