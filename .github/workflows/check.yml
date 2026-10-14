@@ -15,10 +15,11 @@ jobs:
         with:
           python-version: '3.12'
       - name: Validate Python source
-        run: python -m py_compile scripts/generate_audio.py
+        run: python -m py_compile scripts/generate_audio.py scripts/generate_a2_audio.py
       - name: Validate all JavaScript including inline page code
         run: |
           node --check neural-audio.js
+          node --check a2-neural-audio.js
           node --check curriculum/a1-notes.js
           node --check curriculum/a1-reading.js
           node --check curriculum/a2-lessons.js
