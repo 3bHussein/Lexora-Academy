@@ -3,6 +3,7 @@ test('lessons, answers, writing and reading work', async ({ page }) => {
   const errors = [];
   page.on('pageerror', error => errors.push(error.message));
   await page.goto('http://127.0.0.1:4173/', { waitUntil: 'load' });
+  await page.locator('#lessonsTab').click();
   await expect(page.locator('#nav button')).toHaveCount(12);
   await expect(page.locator('#lesson h2')).toContainText('التحية والتعارف');
   await page.locator('#nav button').nth(1).click();
@@ -23,14 +24,17 @@ test('lessons, answers, writing and reading work', async ({ page }) => {
 
 test('saved progress survives reload', async ({ page }) => {
   await page.goto('http://127.0.0.1:4173/');
+  await page.locator('#lessonsTab').click();
   await page.locator('#answers button').filter({ hasText: 'Здравствуйте!' }).click();
   await expect(page.locator('#summary')).toContainText('1 من 12');
   await page.reload();
+  await page.locator('#lessonsTab').click();
   await expect(page.locator('#summary')).toContainText('1 من 12');
   await expect(page.locator('#nav button').first()).toContainText('✓');
   await page.locator('#readingTab').click();
   await page.locator('#passages section').first().getByRole('button', { name: 'من مصر' }).click();
   await page.reload();
+  await page.locator('#lessonsTab').click();
   await page.locator('#readingTab').click();
   await expect(page.locator('#passages section').first().locator('h3')).toContainText('✓');
 });
@@ -38,6 +42,7 @@ test('saved progress survives reload', async ({ page }) => {
 test('mobile layout remains usable', async ({ page }) => {
   await page.setViewportSize({ width: 390, height: 844 });
   await page.goto('http://127.0.0.1:4173/');
+  await page.locator('#lessonsTab').click();
   await expect(page.locator('#nav button')).toHaveCount(12);
   await expect(page.locator('#lesson h2')).toBeVisible();
   await page.locator('#readingTab').click();
@@ -50,6 +55,7 @@ test('all 12 lessons render and writing accepts correct answers', async ({ page 
   const errors = [];
   page.on('pageerror', error => errors.push(error.message));
   await page.goto('http://127.0.0.1:4173/');
+  await page.locator('#lessonsTab').click();
   for (let i = 0; i < 12; i++) {
     await page.locator('#nav button').nth(i).click();
     await expect(page.locator('#lesson h2')).toBeVisible();
@@ -65,6 +71,7 @@ test('all 12 lessons render and writing accepts correct answers', async ({ page 
 
 test('all reading passages and translation controls render', async ({ page }) => {
   await page.goto('http://127.0.0.1:4173/');
+  await page.locator('#lessonsTab').click();
   await page.locator('#readingTab').click();
   const passages = page.locator('#passages section');
   await expect(passages).toHaveCount(4);
@@ -81,6 +88,7 @@ test('A2 lessons navigation, writing and saved progress', async ({ page }) => {
   const errors = [];
   page.on('pageerror', error => errors.push(error.message));
   await page.goto('http://127.0.0.1:4173/');
+  await page.locator('#lessonsTab').click();
   await page.locator('#a2Tab').click();
   await expect(page.locator('#nav button')).toHaveCount(16);
   for (let i = 0; i < 16; i++) {
@@ -94,6 +102,7 @@ test('A2 lessons navigation, writing and saved progress', async ({ page }) => {
   await page.getByRole('button', { name: 'Вчера я работал дома.' }).click();
   await expect(page.locator('[aria-live]').first()).toContainText('إجابة صحيحة');
   await page.reload();
+  await page.locator('#lessonsTab').click();
   await page.locator('#a2Tab').click();
   await expect(page.locator('#nav button').first()).toContainText('✓');
   await page.locator('#lessonsTab').click();
@@ -105,6 +114,7 @@ test('A2 reading lab saves comprehension progress separately', async ({ page }) 
   const errors = [];
   page.on('pageerror', e => errors.push(e.message));
   await page.goto('http://127.0.0.1:4173/');
+  await page.locator('#lessonsTab').click();
   await page.locator('#a2ReadingTab').click();
   await expect(page.locator('#a2Passages section')).toHaveCount(5);
   for (let i = 0; i < 5; i++) {
@@ -115,6 +125,7 @@ test('A2 reading lab saves comprehension progress separately', async ({ page }) 
     await expect(passage.locator('[aria-live]')).toContainText('فهم ممتاز');
   }
   await page.reload();
+  await page.locator('#lessonsTab').click();
   await page.locator('#a2ReadingTab').click();
   await expect(page.locator('#a2Passages section h3').first()).toContainText('✓');
   await page.locator('#readingTab').click();
@@ -126,6 +137,7 @@ test('A2 dialogue practice, translations and progress survive reload', async ({ 
   const errors = [];
   page.on('pageerror', error => errors.push(error.message));
   await page.goto('http://127.0.0.1:4173/');
+  await page.locator('#lessonsTab').click();
   await page.locator('#a2DialoguesTab').click();
   await expect(page.locator('#a2Dialogues section')).toHaveCount(4);
   const first = page.locator('#a2Dialogues section').first();
@@ -135,6 +147,7 @@ test('A2 dialogue practice, translations and progress survive reload', async ({ 
   await first.getByRole('button', { name: 'Сегодня мой первый день.' }).click();
   await expect(first.locator('[aria-live]')).toContainText('إجابة صحيحة');
   await page.reload();
+  await page.locator('#lessonsTab').click();
   await page.locator('#a2DialoguesTab').click();
   await expect(page.locator('#a2Dialogues section h3').first()).toContainText('✓');
   expect(errors).toEqual([]);
@@ -144,6 +157,7 @@ test('A2 review exam validates completion and scores answers', async ({ page }) 
   const errors = [];
   page.on('pageerror', error => errors.push(error.message));
   await page.goto('http://127.0.0.1:4173/');
+  await page.locator('#lessonsTab').click();
   await page.locator('#a2ExamTab').click();
   await expect(page.locator('#a2Exam section')).toHaveCount(16);
   await page.locator('#a2ExamSubmit').click();
@@ -164,6 +178,7 @@ test('A2 audio assets exist and listening practice saves progress', async ({ pag
   const errors = [];
   page.on('pageerror', error => errors.push(error.message));
   await page.goto('http://127.0.0.1:4173/');
+  await page.locator('#lessonsTab').click();
   const audio = await page.evaluate(() => window.LEXORA_A2_AUDIO);
   expect(Object.keys(audio).length).toBe(44);
   for (const path of Object.values(audio)) {
@@ -180,6 +195,7 @@ test('A2 audio assets exist and listening practice saves progress', async ({ pag
   await first.getByRole('button', { name: 'أمس عملت في المنزل' }).click();
   await expect(first.locator('[aria-live]')).toContainText('فهم صحيح');
   await page.reload();
+  await page.locator('#lessonsTab').click();
   await page.locator('#a2ListeningTab').click();
   await expect(page.locator('#a2Listening section h3').first()).toContainText('✓');
   expect(errors).toEqual([]);
@@ -190,6 +206,7 @@ test('mobile A1/A2 navigation preserves independent progress', async ({ page }) 
   page.on('pageerror', error => errors.push(error.message));
   await page.setViewportSize({ width: 375, height: 812 });
   await page.goto('http://127.0.0.1:4173/');
+  await page.locator('#lessonsTab').click();
   await page.locator('#answers button').filter({ hasText: 'Здравствуйте!' }).click();
   await page.locator('#a2Tab').click();
   await page.locator('#nav button').first().click();
@@ -199,6 +216,7 @@ test('mobile A1/A2 navigation preserves independent progress', async ({ page }) 
   await page.locator('#a2ListeningTab').click();
   await page.locator('#a2Listening section').first().getByRole('button', { name: 'أمس عملت في المنزل' }).click();
   await page.reload();
+  await page.locator('#lessonsTab').click();
   await expect(page.locator('#summary')).toContainText('1 من 12');
   await page.locator('#a2Tab').click();
   await expect(page.locator('#nav button').first()).toContainText('✓');
@@ -215,6 +233,7 @@ test('unified dashboard reports saved A1/A2 progress and exam score', async ({ p
   const errors = [];
   page.on('pageerror', error => errors.push(error.message));
   await page.goto('http://127.0.0.1:4173/');
+  await page.locator('#lessonsTab').click();
   await page.evaluate(() => {
     localStorage.setItem('lexoraA1done', JSON.stringify([0, 1]));
     localStorage.setItem('lexoraA1reading', JSON.stringify([0]));
@@ -235,6 +254,7 @@ test('unified dashboard reports saved A1/A2 progress and exam score', async ({ p
   await expect(cards.nth(5)).toContainText('4 / 8');
   await expect(cards.nth(6)).toContainText('13 / 16');
   await page.reload();
+  await page.locator('#lessonsTab').click();
   await page.locator('#dashboardTab').click();
   await expect(page.locator('#dashboardStats section').nth(6)).toContainText('13 / 16');
   expect(errors).toEqual([]);
@@ -244,6 +264,7 @@ test('progress backup exports and restores safely without losing unrelated data'
   const errors = [];
   page.on('pageerror', error => errors.push(error.message));
   await page.goto('http://127.0.0.1:4173/');
+  await page.locator('#lessonsTab').click();
   await page.evaluate(() => {
     localStorage.setItem('lexoraA1done', JSON.stringify([0, 2]));
     localStorage.setItem('lexoraA2exam', JSON.stringify({ score: 14, total: 16 }));
@@ -277,6 +298,7 @@ test('progress backup exports and restores safely without losing unrelated data'
 
 test('A2 exam explains incorrect answers and clears review on retry', async ({ page }) => {
   await page.goto('http://127.0.0.1:4173/');
+  await page.locator('#lessonsTab').click();
   await page.locator('#a2ExamTab').click();
   for (let i = 0; i < 16; i++) {
     const answer = await page.evaluate(index => index === 0 ? window.LEXORA_A2_EXAM[index].wrong : window.LEXORA_A2_EXAM[index].correct, i);
@@ -295,6 +317,7 @@ test('A2 exam explains incorrect answers and clears review on retry', async ({ p
 
 test('A2 exam does not put all correct answers in the first position', async ({ page }) => {
   await page.goto('http://127.0.0.1:4173/');
+  await page.locator('#lessonsTab').click();
   await page.locator('#a2ExamTab').click();
   const placements = await page.locator('#a2Exam section').evaluateAll(sections =>
     sections.map((section, i) => {
@@ -311,6 +334,7 @@ test('redesigned home menu and complete A1 alphabet work for a first-time learne
   const errors = [];
   page.on('pageerror', error => errors.push(error.message));
   await page.goto('http://127.0.0.1:4173/');
+  await page.locator('#lessonsTab').click();
   await page.locator('#homeTab').click();
   await expect(page.locator('.hero')).toContainText('Lexora Academy');
   await expect(page.locator('.course-card')).toHaveCount(8);
@@ -327,10 +351,20 @@ test('redesigned home menu and complete A1 alphabet work for a first-time learne
 test('redesigned mobile navigation stays in viewport', async ({ page }) => {
   await page.setViewportSize({width: 375, height: 812});
   await page.goto('http://127.0.0.1:4173/');
+  await page.locator('#lessonsTab').click();
   await page.locator('#homeTab').click();
   await expect(page.locator('.course-card')).toHaveCount(8);
   await page.locator('#alphabetTab').click();
   await expect(page.locator('.alphabet-card')).toHaveCount(33);
   const overflow = await page.evaluate(() => document.documentElement.scrollWidth > innerWidth + 2);
   expect(overflow).toBe(false);
+});
+
+test('new home is the default page and legacy dark theme is absent', async ({ page }) => {
+  await page.goto('http://127.0.0.1:4173/');
+  await expect(page.locator('.hero')).toBeVisible();
+  await expect(page.locator('.course-card')).toHaveCount(8);
+  await expect(page.locator('body')).toHaveCSS('background-color', 'rgb(244, 247, 252)');
+  await expect(page.locator('aside')).toHaveCSS('position', 'sticky');
+  await expect(page.locator('#homeTab')).toBeVisible();
 });
