@@ -1,4 +1,5 @@
 const { test, expect } = require('@playwright/test');
+test.beforeEach(async ({ page }) => { await page.addInitScript(() => localStorage.setItem('lexoraLanguage','ar')); });
 test('lessons, answers, writing and reading work', async ({ page }) => {
   const errors = [];
   page.on('pageerror', error => errors.push(error.message));
@@ -367,4 +368,22 @@ test('new home is the default page and legacy dark theme is absent', async ({ pa
   await expect(page.locator('body')).toHaveCSS('background-color', 'rgb(244, 247, 252)');
   await expect(page.locator('aside')).toHaveCSS('position', 'sticky');
   await expect(page.locator('#homeTab')).toBeVisible();
+});
+
+test('English is the default language and switching to Arabic persists', async ({ page }) => {
+  await page.goto('http://127.0.0.1:4173/');
+  await page.evaluate(() => localStorage.removeItem('lexoraLanguage'));
+  await page.reload();
+  await expect(page.locator('html')).toHaveAttribute('lang','en');
+  await expect(page.locator('#academyLanguage')).toHaveValue('en');
+  await expect(page.locator('.hero h1')).toContainText('Welcome to');
+  await expect(page.locator('.course-card').first()).toContainText('A1 Lessons');
+  await page.locator('#alphabetTab').click();
+  await expect(page.locator('#lesson h2')).toContainText('Start from Zero');
+  await page.locator('#academyLanguage').selectOption('ar');
+  await expect(page.locator('html')).toHaveAttribute('lang','ar');
+  await expect(page.locator('.hero h1')).toContainText('مرحبًا');
+  await expect(page.locator('#academyLanguage')).toHaveValue('ar');
+  await page.reload();
+  await expect(page.locator('#academyLanguage')).toHaveValue('ar');
 });
