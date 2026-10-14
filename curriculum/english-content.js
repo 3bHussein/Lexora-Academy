@@ -58,5 +58,5 @@ const c=window.LEXORA_ENGLISH_CONTENT;
 (window.LEXORA_A2_READING||[]).forEach((v,i)=>{const t=c.a2Reading[i];if(!t)return;[v.title,v.translation,v.question,v.choices]=t});
 (window.LEXORA_A2_DIALOGUES||[]).forEach((v,i)=>{const t=c.a2Dialogues[i];if(!t)return;v.title=t[0];v.context=t[1];v.turns.forEach((turn,j)=>turn[1]=t[2][j]);v.question=t[3];if(t[4])v.choices=t[4]});
 (window.LEXORA_A2_LISTENING||[]).forEach((v,i)=>{const t=c.a2Listening[i];if(!t)return;v.question=t[0];v.choices=t[1]});
-(window.LEXORA_A2_EXAM||[]).forEach((v,i)=>{v.question=c.a2Exam[i]||v.question});
+(window.LEXORA_A2_EXAM||[]).forEach((v,i)=>{v.question=c.a2Exam[i]||v.question;if(i===13){v.correct="because";v.wrong="but"}if(i===14){v.correct="job interview";v.wrong="railway station"}if(i===15){v.correct="to try on clothes";v.wrong="hotel reservation"}});
 };
