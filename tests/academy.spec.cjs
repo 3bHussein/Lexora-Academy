@@ -159,3 +159,28 @@ test('A2 review exam validates completion and scores answers', async ({ page }) 
   expect(saved.score).toBe(16);
   expect(errors).toEqual([]);
 });
+
+test('A2 audio assets exist and listening practice saves progress', async ({ page, request }) => {
+  const errors = [];
+  page.on('pageerror', error => errors.push(error.message));
+  await page.goto('http://127.0.0.1:4173/');
+  const audio = await page.evaluate(() => window.LEXORA_A2_AUDIO);
+  expect(Object.keys(audio).length).toBe(44);
+  for (const path of Object.values(audio)) {
+    const response = await request.get('http://127.0.0.1:4173/' + path);
+    expect(response.ok(), path).toBe(true);
+    expect((await response.body()).length, path).toBeGreaterThan(1000);
+  }
+  await page.locator('#a2ListeningTab').click();
+  await expect(page.locator('#a2Listening section')).toHaveCount(8);
+  const first = page.locator('#a2Listening section').first();
+  await expect(first.locator('details')).not.toHaveAttribute('open', '');
+  await first.locator('summary').click();
+  await expect(first.locator('details .ru')).toBeVisible();
+  await first.getByRole('button', { name: 'أمس عملت في المنزل' }).click();
+  await expect(first.locator('[aria-live]')).toContainText('فهم صحيح');
+  await page.reload();
+  await page.locator('#a2ListeningTab').click();
+  await expect(page.locator('#a2Listening section h3').first()).toContainText('✓');
+  expect(errors).toEqual([]);
+});
