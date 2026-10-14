@@ -1,0 +1,22 @@
+const { test, expect } = require('@playwright/test');
+test('lessons, answers, writing and reading work', async ({ page }) => {
+  const errors = [];
+  page.on('pageerror', error => errors.push(error.message));
+  await page.goto('http://127.0.0.1:4173/', { waitUntil: 'load' });
+  await expect(page.locator('#nav button')).toHaveCount(12);
+  await expect(page.locator('#lesson h2')).toContainText('التحية والتعارف');
+  await page.locator('#nav button').nth(1).click();
+  await expect(page.locator('#lesson h2')).toContainText('الأسماء والتقديم');
+  await page.locator('#writing').fill('Меня зовут Анна.');
+  await page.locator('#checkWriting').click();
+  await expect(page.locator('#writingFeedback')).toContainText('ممتاز');
+  await page.locator('#answers button').filter({ hasText: 'Меня зовут Анна.' }).click();
+  await expect(page.locator('#feedback')).toContainText('إجابة صحيحة');
+  await page.locator('#readingTab').click();
+  await expect(page.locator('#passages section')).toHaveCount(4);
+  await page.locator('#passages section').first().getByRole('button', { name: 'من مصر' }).click();
+  await expect(page.locator('#passages section').first().locator('[aria-live]')).toContainText('فهم ممتاز');
+  await page.locator('#lessonsTab').click();
+  await expect(page.locator('#lesson h2')).toContainText('الأسماء والتقديم');
+  expect(errors).toEqual([]);
+});
