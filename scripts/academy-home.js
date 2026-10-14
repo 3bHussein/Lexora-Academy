@@ -50,7 +50,12 @@ function showAlphabet(){
   const alphabetTitle=document.createElement("h3");alphabetTitle.className="section-title";alphabetTitle.textContent="الأبجدية الروسية — 33 حرفًا";main.append(alphabetTitle);
   const notice=document.createElement("p");notice.className="meta";notice.textContent="النطق العربي تقريبي للتسهيل، وبعض الأصوات الروسية ليس لها مقابل عربي مطابق. العلامتان Ъ وЬ لا تنطقان وحدهما.";main.append(notice);
   const grid=document.createElement("div");grid.className="alphabet-grid";
-  window.LEXORA_ALPHABET.forEach(({letter,latin,ar})=>{const box=document.createElement("article");box.className="alphabet-card";const big=document.createElement("strong");big.textContent=letter;const pronunciation=document.createElement("div");pronunciation.textContent="صوت تقريبي: "+ar;const small=document.createElement("small");small.textContent="Latin: "+latin;box.append(big,pronunciation,small);grid.append(box)});main.append(grid);
+  window.LEXORA_ALPHABET.forEach(({letter,latin,ar})=>{const box=document.createElement("article");box.className="alphabet-card";const big=document.createElement("strong");big.textContent=letter;const pronunciation=document.createElement("div");pronunciation.textContent="صوت تقريبي: "+ar;const small=document.createElement("small");small.textContent="Latin: "+latin;box.append(big,pronunciation,small);
+  const playLetter=document.createElement("button");playLetter.type="button";playLetter.className="alphabet-play";playLetter.textContent=isArabic()?"🔊 استمع للحرف":"🔊 Hear letter";
+  const letterKey=letter.split(" ")[0];const recording=window.LEXORA_ALPHABET_AUDIO?.[letterKey];
+  if(recording){playLetter.onclick=()=>new Audio(recording).play().catch(()=>{playLetter.textContent=isArabic()?"تعذر تشغيل الصوت":"Audio unavailable"})}
+  else{playLetter.disabled=true;playLetter.title=isArabic()?"التسجيل قيد الإعداد":"Recording being prepared";playLetter.textContent=isArabic()?"الصوت قريبًا":"Audio coming soon"}
+  box.append(playLetter);grid.append(box)});main.append(grid);
   const practice=document.createElement("section");practice.className="example";practice.innerHTML='<h3>✍️ أول تدريب</h3><p>اكتب الكلمة الروسية التي تعني «ماما» كما تظهر هنا: <b lang="ru" dir="ltr">мама</b></p><input id="alphabetWriting" dir="ltr" autocomplete="off" placeholder="اكتب мама"><button id="alphabetCheck" type="button" style="margin-top:10px">تحقق من الإجابة</button><p id="alphabetFeedback" aria-live="polite"></p>';
   main.append(practice);practice.querySelector("#alphabetCheck").onclick=()=>{const ok=practice.querySelector("#alphabetWriting").value.trim().toLocaleLowerCase("ru")==="мама";const feedback=practice.querySelector("#alphabetFeedback");feedback.textContent=ok?"✓ ممتاز! كتبت أول كلمة روسية بشكل صحيح.":"جرّب تاني: мама — م ا م ا";feedback.className=ok?"ok":"bad";if(ok)localStorage.setItem("lexoraAlphabetStarted","true")};
   const audio=document.createElement("section");audio.className="example";audio.innerHTML='<h3>🔊 أول جملة روسية</h3><p class="ru">Привет!</p><p>مرحبًا (غير رسمي)</p><button id="alphabetAudio">▶ استمع للصوت الطبيعي</button><p id="alphabetAudioFeedback" aria-live="polite"></p>';main.append(audio);
@@ -62,7 +67,7 @@ function showAlphabet(){
   steps.querySelectorAll("p").forEach((el,i)=>el.textContent=["Learn uppercase and lowercase letters with approximate pronunciation.","Start with simple words like мама (mama) and метро (metro).","Listen to natural Russian recordings and repeat aloud."][i]);
   alphabetTitle.textContent="The Russian alphabet — 33 letters";
   notice.textContent="Arabic sound guides are approximate. Some Russian sounds have no exact equivalent; Ъ and Ь are not pronounced independently.";
-  grid.querySelectorAll(".alphabet-card div").forEach(el=>el.textContent=el.textContent.replace("صوت تقريبي: ","Arabic sound guide: "));
+  grid.querySelectorAll(".alphabet-card div").forEach(el=>el.textContent="Pronunciation: "+el.parentElement.querySelector("small").textContent.replace("Latin: ",""));
   practice.querySelector("h3").textContent="✍️ First writing exercise";
   practice.querySelector("p").textContent="Type the Russian word for mama: мама";
   practice.querySelector("#alphabetWriting").placeholder="Type мама";
