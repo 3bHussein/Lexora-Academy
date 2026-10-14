@@ -15,9 +15,17 @@ jobs:
         with:
           python-version: '3.12'
       - name: Validate Python source
-        run: python -m py_compile scripts/generate_audio.py scripts/generate_a2_audio.py
+        run: python -m py_compile scripts/generate_audio.py scripts/generate_a2_audio.py scripts/generate_alphabet_audio.py scripts/generate_curriculum_audio.py
       - name: Validate all JavaScript including inline page code
         run: |
+          node --check alphabet-neural-audio.js
+          node --check curriculum-neural-audio.js
+          node --check curriculum/english-content.js
+          node --check curriculum/a1-english.js
+          node --check curriculum/visual-vocabulary.js
+          node --check scripts/russian-audio.js
+          node --check scripts/english-ui.js
+          node --check scripts/visual-vocabulary.js
           node --check neural-audio.js
           node --check a2-neural-audio.js
           node --check curriculum/a1-notes.js
@@ -40,6 +48,25 @@ jobs:
               assert Path(src).is_file(), f'Missing JavaScript asset: {src}'
           PY
           node --check /tmp/lexora-inline.js
+      - name: Verify neural audio files and manifest completeness
+        run: |
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          for name,variable,minimum in [
+              ('alphabet-neural-audio.js','LEXORA_ALPHABET_AUDIO',33),
+              ('curriculum-neural-audio.js','LEXORA_CURRICULUM_AUDIO',169)
+          ]:
+              raw=Path(name).read_text(encoding='utf-8')
+              items=json.loads(raw.removeprefix('window.'+variable+' = ').rstrip(';\\n '))
+              assert len(items)>=minimum,(name,len(items))
+              for phrase,asset in items.items():
+                  path=Path(asset)
+                  assert path.is_file(),f'Missing audio: {phrase}: {asset}'
+                  assert path.stat().st_size>1000,f'Empty audio: {asset}'
+                  assert path.read_bytes()[:3]==b'ID3' or path.read_bytes()[:2] in (b'\\xff\\xfb',b'\\xff\\xf3',b'\\xff\\xf2'),f'Invalid MP3: {asset}'
+              print(f'{name}: {len(items)} validated audio recordings')
+          PY
       - name: Install browser test runner
         run: |
           npm install --no-save @playwright/test@1.56.1
