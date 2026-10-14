@@ -45,3 +45,34 @@ test('mobile layout remains usable', async ({ page }) => {
   const overflow = await page.evaluate(() => document.documentElement.scrollWidth > window.innerWidth + 2);
   expect(overflow).toBe(false);
 });
+
+test('all 12 lessons render and writing accepts correct answers', async ({ page }) => {
+  const errors = [];
+  page.on('pageerror', error => errors.push(error.message));
+  await page.goto('http://127.0.0.1:4173/');
+  for (let i = 0; i < 12; i++) {
+    await page.locator('#nav button').nth(i).click();
+    await expect(page.locator('#lesson h2')).toBeVisible();
+    await expect(page.locator('#answers button')).toHaveCount(2);
+    await expect(page.locator('#writing')).toBeVisible();
+    const expected = await page.evaluate(index => window.LEXORA_NOTES[index].writingAnswer, i);
+    await page.locator('#writing').fill(expected);
+    await page.locator('#checkWriting').click();
+    await expect(page.locator('#writingFeedback')).toContainText('ممتاز');
+  }
+  expect(errors).toEqual([]);
+});
+
+test('all reading passages and translation controls render', async ({ page }) => {
+  await page.goto('http://127.0.0.1:4173/');
+  await page.locator('#readingTab').click();
+  const passages = page.locator('#passages section');
+  await expect(passages).toHaveCount(4);
+  for (let i = 0; i < 4; i++) {
+    const passage = passages.nth(i);
+    await passage.locator('summary').click();
+    await expect(passage.locator('details')).toHaveAttribute('open', '');
+    await expect(passage.locator('details p')).toBeVisible();
+    await expect(passage.locator('button')).toHaveCount(2);
+  }
+});
