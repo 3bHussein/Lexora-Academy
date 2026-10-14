@@ -306,3 +306,31 @@ test('A2 exam does not put all correct answers in the first position', async ({ 
   expect(placements).toContain(1);
   expect(placements).toHaveLength(16);
 });
+
+test('redesigned home menu and complete A1 alphabet work for a first-time learner', async ({ page }) => {
+  const errors = [];
+  page.on('pageerror', error => errors.push(error.message));
+  await page.goto('http://127.0.0.1:4173/');
+  await page.locator('#homeTab').click();
+  await expect(page.locator('.hero')).toContainText('Lexora Academy');
+  await expect(page.locator('.course-card')).toHaveCount(8);
+  await page.locator('#heroStart').click();
+  await expect(page.locator('.alphabet-card')).toHaveCount(33);
+  await page.locator('#alphabetWriting').fill('мама');
+  await page.locator('#alphabetCheck').click();
+  await expect(page.locator('#alphabetFeedback')).toContainText('ممتاز');
+  await page.getByRole('button', { name: 'التالي: درس التحية والتعارف' }).click();
+  await expect(page.locator('#lesson h2')).toContainText('التحية والتعارف');
+  expect(errors).toEqual([]);
+});
+
+test('redesigned mobile navigation stays in viewport', async ({ page }) => {
+  await page.setViewportSize({width: 375, height: 812});
+  await page.goto('http://127.0.0.1:4173/');
+  await page.locator('#homeTab').click();
+  await expect(page.locator('.course-card')).toHaveCount(8);
+  await page.locator('#alphabetTab').click();
+  await expect(page.locator('.alphabet-card')).toHaveCount(33);
+  const overflow = await page.evaluate(() => document.documentElement.scrollWidth > innerWidth + 2);
+  expect(overflow).toBe(false);
+});
