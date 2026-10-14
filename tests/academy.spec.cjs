@@ -292,3 +292,17 @@ test('A2 exam explains incorrect answers and clears review on retry', async ({ p
   await expect(page.locator('#a2ExamReview')).toContainText('جميع الإجابات صحيحة');
   await expect(page.locator('#a2ExamReview')).not.toContainText('إجابتك:');
 });
+
+test('A2 exam does not put all correct answers in the first position', async ({ page }) => {
+  await page.goto('http://127.0.0.1:4173/');
+  await page.locator('#a2ExamTab').click();
+  const placements = await page.locator('#a2Exam section').evaluateAll(sections =>
+    sections.map((section, i) => {
+      const correct = window.LEXORA_A2_EXAM[i].correct;
+      return [...section.querySelectorAll('input[type=radio]')].findIndex(input => input.value === correct);
+    })
+  );
+  expect(placements).toContain(0);
+  expect(placements).toContain(1);
+  expect(placements).toHaveLength(16);
+});
