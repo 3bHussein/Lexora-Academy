@@ -418,3 +418,19 @@ test('English LTR and Arabic RTL direction persists with Russian examples LTR', 
   await page.locator('#lessonsTab').click();
   await expect(page.locator('#lesson .ru').first()).toHaveCSS('direction','ltr');
 });
+
+test('alphabet recognition quiz works in English and stores score', async ({ page }) => {
+  await page.goto('http://127.0.0.1:4173/');
+  await page.evaluate(() => localStorage.removeItem('lexoraLanguage'));
+  await page.reload();
+  await page.locator('#alphabetTab').click();
+  const quiz=page.locator('.alphabet-quiz');
+  await expect(quiz).toBeVisible();
+  await expect(quiz.locator('.alphabet-quiz-choices button')).toHaveCount(3);
+  for(let round=0;round<5;round++){
+    await quiz.locator('.alphabet-quiz-choices button').first().click();
+    await quiz.getByRole('button',{name:'Next round →'}).click();
+  }
+  await expect(quiz).toContainText('Completed:');
+  await expect.poll(()=>page.evaluate(()=>localStorage.getItem('lexoraAlphabetQuizBest'))).not.toBeNull();
+});
