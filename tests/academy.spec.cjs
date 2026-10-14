@@ -20,3 +20,28 @@ test('lessons, answers, writing and reading work', async ({ page }) => {
   await expect(page.locator('#lesson h2')).toContainText('الأسماء والتقديم');
   expect(errors).toEqual([]);
 });
+
+test('saved progress survives reload', async ({ page }) => {
+  await page.goto('http://127.0.0.1:4173/');
+  await page.locator('#answers button').filter({ hasText: 'Здравствуйте!' }).click();
+  await expect(page.locator('#summary')).toContainText('1 من 12');
+  await page.reload();
+  await expect(page.locator('#summary')).toContainText('1 من 12');
+  await expect(page.locator('#nav button').first()).toContainText('✓');
+  await page.locator('#readingTab').click();
+  await page.locator('#passages section').first().getByRole('button', { name: 'من مصر' }).click();
+  await page.reload();
+  await page.locator('#readingTab').click();
+  await expect(page.locator('#passages section').first().locator('h3')).toContainText('✓');
+});
+
+test('mobile layout remains usable', async ({ page }) => {
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.goto('http://127.0.0.1:4173/');
+  await expect(page.locator('#nav button')).toHaveCount(12);
+  await expect(page.locator('#lesson h2')).toBeVisible();
+  await page.locator('#readingTab').click();
+  await expect(page.locator('#passages section')).toHaveCount(4);
+  const overflow = await page.evaluate(() => document.documentElement.scrollWidth > window.innerWidth + 2);
+  expect(overflow).toBe(false);
+});
