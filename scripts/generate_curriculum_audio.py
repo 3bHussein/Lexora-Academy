@@ -50,4 +50,4 @@ async def main():
 if __name__=="__main__":
     asyncio.run(main())
 
-# Changes to this generator trigger the audio-publishing workflow.
+# Regenerate after publishing-workflow rebase fix; trigger a run from current main.
