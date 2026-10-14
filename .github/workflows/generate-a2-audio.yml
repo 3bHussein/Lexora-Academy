@@ -1,0 +1,37 @@
+name: Generate A2 Russian neural audio
+on:
+  workflow_dispatch:
+permissions:
+  contents: write
+jobs:
+  generate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Install neural speech engine
+        run: python -m pip install -r requirements-audio.txt
+      - name: Generate A2 MP3 files
+        run: python scripts/generate_a2_audio.py
+      - name: Validate audio manifest
+        run: |
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          text = Path('a2-neural-audio.js').read_text(encoding='utf-8')
+          data = json.loads(text.removeprefix('window.LEXORA_A2_AUDIO = ').rstrip(';\n '))
+          assert len(data) == 44, f'Expected 44 A2 recordings, got {len(data)}'
+          for rel in data.values():
+              path = Path(rel)
+              assert path.is_file() and path.stat().st_size > 1000, rel
+          print('Verified', len(data), 'A2 recordings')
+          PY
+      - name: Commit generated A2 audio
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add audio/neural/a2-*.mp3 a2-neural-audio.js
+          git diff --cached --quiet || (git commit -m "Publish A2 neural Russian audio" && git push)
