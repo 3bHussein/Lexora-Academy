@@ -1,5 +1,5 @@
 const { test, expect } = require('@playwright/test');
-test.beforeEach(async ({ page }, testInfo) => { if (!testInfo.title.includes('English is the default language') && !testInfo.title.includes('English mode has no Arabic UI text')) await page.addInitScript(() => localStorage.setItem('lexoraLanguage','ar')); });
+test.beforeEach(async ({ page }, testInfo) => { if (!testInfo.title.includes('English is the default language') && !testInfo.title.includes('English mode has no Arabic UI text') && !testInfo.title.includes('English LTR and Arabic RTL')) await page.addInitScript(() => localStorage.setItem('lexoraLanguage','ar')); });
 test('lessons, answers, writing and reading work', async ({ page }) => {
   const errors = [];
   page.on('pageerror', error => errors.push(error.message));
