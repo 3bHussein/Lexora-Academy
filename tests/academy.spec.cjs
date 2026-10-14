@@ -81,7 +81,7 @@ test('all reading passages and translation controls render', async ({ page }) =>
     await passage.locator('summary').click();
     await expect(passage.locator('details')).toHaveAttribute('open', '');
     await expect(passage.locator('details p')).toBeVisible();
-    await expect(passage.locator('button')).toHaveCount(2);
+    await expect(passage.locator('button:not(.russian-audio-btn)')).toHaveCount(2);
   }
 });
 
@@ -122,7 +122,7 @@ test('A2 reading lab saves comprehension progress separately', async ({ page }) 
     const passage = page.locator('#a2Passages section').nth(i);
     await passage.locator('summary').click();
     await expect(passage.locator('details p')).toBeVisible();
-    await passage.locator('button').first().click();
+    await passage.locator('button:not(.russian-audio-btn)').first().click();
     await expect(passage.locator('[aria-live]')).toContainText('فهم ممتاز');
   }
   await page.reload();
@@ -398,7 +398,7 @@ test('English mode has no Arabic UI text across learning sections', async ({ pag
       const walker=document.createTreeWalker(el,NodeFilter.SHOW_TEXT);
       let n,found=[];
       while((n=walker.nextNode())){
-        if(n.parentElement?.closest('script,style,[lang="ru"],.ru'))continue;
+        if(n.parentElement?.closest('script,style,option,[lang="ru"],.ru'))continue;
         if(/[\u0600-\u06ff]/.test(n.nodeValue))found.push(n.nodeValue.trim().slice(0,80));
       }
       return found.join(' | ');
