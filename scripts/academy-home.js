@@ -55,7 +55,23 @@ function showAlphabet(){
   main.append(practice);practice.querySelector("#alphabetCheck").onclick=()=>{const ok=practice.querySelector("#alphabetWriting").value.trim().toLocaleLowerCase("ru")==="мама";const feedback=practice.querySelector("#alphabetFeedback");feedback.textContent=ok?"✓ ممتاز! كتبت أول كلمة روسية بشكل صحيح.":"جرّب تاني: мама — م ا م ا";feedback.className=ok?"ok":"bad";if(ok)localStorage.setItem("lexoraAlphabetStarted","true")};
   const audio=document.createElement("section");audio.className="example";audio.innerHTML='<h3>🔊 أول جملة روسية</h3><p class="ru">Привет!</p><p>مرحبًا (غير رسمي)</p><button id="alphabetAudio">▶ استمع للصوت الطبيعي</button><p id="alphabetAudioFeedback" aria-live="polite"></p>';main.append(audio);
   audio.querySelector("#alphabetAudio").onclick=()=>{const src=window.LEXORA_AUDIO?.["Привет!"];if(!src){audio.querySelector("#alphabetAudioFeedback").textContent="التسجيل غير متوفر حاليًا";return}new Audio(src).play().catch(()=>{audio.querySelector("#alphabetAudioFeedback").textContent="تعذر تشغيل الصوت"})};
-  const next=document.createElement("button");next.textContent="التالي: درس التحية والتعارف ←";next.onclick=()=>$("#lessonsTab").click();main.append(next);
+  if(!isArabic()){
+  h.textContent="🔤 Start from Zero — Russian A1";
+  intro.textContent="No previous experience needed. Russian uses the 33-letter Cyrillic alphabet. Start with the letter shapes and sounds, then build your first words and sentences.";
+  steps.querySelectorAll("h3").forEach((el,i)=>el.textContent=["1️⃣ Learn the letters","2️⃣ Build your first words","3️⃣ Listen and repeat"][i]);
+  steps.querySelectorAll("p").forEach((el,i)=>el.textContent=["Learn uppercase and lowercase letters with approximate pronunciation.","Start with simple words like мама (mama) and метро (metro).","Listen to natural Russian recordings and repeat aloud."][i]);
+  alphabetTitle.textContent="The Russian alphabet — 33 letters";
+  notice.textContent="Arabic sound guides are approximate. Some Russian sounds have no exact equivalent; Ъ and Ь are not pronounced independently.";
+  grid.querySelectorAll(".alphabet-card div").forEach(el=>el.textContent=el.textContent.replace("صوت تقريبي: ","Arabic sound guide: "));
+  practice.querySelector("h3").textContent="✍️ First writing exercise";
+  practice.querySelector("p").textContent="Type the Russian word for mama: мама";
+  practice.querySelector("#alphabetWriting").placeholder="Type мама";
+  practice.querySelector("#alphabetCheck").textContent="Check answer";
+  audio.querySelector("h3").textContent="🔊 Your first Russian phrase";
+  audio.querySelector("p:not(.ru)").textContent="Hi! (informal)";
+  audio.querySelector("#alphabetAudio").textContent="▶ Listen to natural audio";
+}
+const next=document.createElement("button");next.textContent="التالي: درس التحية والتعارف ←";next.onclick=()=>$("#lessonsTab").click();if(!isArabic())next.textContent="Next: Greetings & Introductions →";main.append(next);
 }
 const sidebar=document.querySelector("aside");
 const sidebarOrder=["homeTab","alphabetTab","lessonsTab","readingTab","a2Tab","a2ReadingTab","a2DialoguesTab","a2ListeningTab","a2ExamTab","dashboardTab","backupTab"];
