@@ -139,3 +139,23 @@ test('A2 dialogue practice, translations and progress survive reload', async ({ 
   await expect(page.locator('#a2Dialogues section h3').first()).toContainText('✓');
   expect(errors).toEqual([]);
 });
+
+test('A2 review exam validates completion and scores answers', async ({ page }) => {
+  const errors = [];
+  page.on('pageerror', error => errors.push(error.message));
+  await page.goto('http://127.0.0.1:4173/');
+  await page.locator('#a2ExamTab').click();
+  await expect(page.locator('#a2Exam section')).toHaveCount(16);
+  await page.locator('#a2ExamSubmit').click();
+  await expect(page.locator('#a2ExamResult')).toContainText('أجب عن جميع الأسئلة');
+  for (let i = 0; i < 16; i++) {
+    const correct = await page.evaluate(index => window.LEXORA_A2_EXAM[index].correct, i);
+    await page.locator('#a2Exam section').nth(i).getByRole('radio', { name: correct, exact: true }).check();
+  }
+  await page.locator('#a2ExamSubmit').click();
+  await expect(page.locator('#a2ExamResult')).toContainText('16/16');
+  await expect(page.locator('#a2ExamResult')).toContainText('اجتزت');
+  const saved = await page.evaluate(() => JSON.parse(localStorage.getItem('lexoraA2exam')));
+  expect(saved.score).toBe(16);
+  expect(errors).toEqual([]);
+});
