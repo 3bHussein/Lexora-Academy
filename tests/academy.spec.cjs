@@ -210,3 +210,32 @@ test('mobile A1/A2 navigation preserves independent progress', async ({ page }) 
   expect(overflow).toBe(false);
   expect(errors).toEqual([]);
 });
+
+test('unified dashboard reports saved A1/A2 progress and exam score', async ({ page }) => {
+  const errors = [];
+  page.on('pageerror', error => errors.push(error.message));
+  await page.goto('http://127.0.0.1:4173/');
+  await page.evaluate(() => {
+    localStorage.setItem('lexoraA1done', JSON.stringify([0, 1]));
+    localStorage.setItem('lexoraA1reading', JSON.stringify([0]));
+    localStorage.setItem('lexoraA2done', JSON.stringify([0, 1, 2]));
+    localStorage.setItem('lexoraA2reading', JSON.stringify([0]));
+    localStorage.setItem('lexoraA2dialogues', JSON.stringify([0, 1]));
+    localStorage.setItem('lexoraA2listening', JSON.stringify([0, 1, 2, 3]));
+    localStorage.setItem('lexoraA2exam', JSON.stringify({ score: 13, total: 16 }));
+  });
+  await page.locator('#dashboardTab').click();
+  const cards = page.locator('#dashboardStats section');
+  await expect(cards).toHaveCount(7);
+  await expect(cards.nth(0)).toContainText('2 / 12');
+  await expect(cards.nth(1)).toContainText('1 / 4');
+  await expect(cards.nth(2)).toContainText('3 / 16');
+  await expect(cards.nth(3)).toContainText('1 / 5');
+  await expect(cards.nth(4)).toContainText('2 / 4');
+  await expect(cards.nth(5)).toContainText('4 / 8');
+  await expect(cards.nth(6)).toContainText('13 / 16');
+  await page.reload();
+  await page.locator('#dashboardTab').click();
+  await expect(page.locator('#dashboardStats section').nth(6)).toContainText('13 / 16');
+  expect(errors).toEqual([]);
+});
