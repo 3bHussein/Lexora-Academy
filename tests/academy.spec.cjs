@@ -184,3 +184,29 @@ test('A2 audio assets exist and listening practice saves progress', async ({ pag
   await expect(page.locator('#a2Listening section h3').first()).toContainText('✓');
   expect(errors).toEqual([]);
 });
+
+test('mobile A1/A2 navigation preserves independent progress', async ({ page }) => {
+  const errors = [];
+  page.on('pageerror', error => errors.push(error.message));
+  await page.setViewportSize({ width: 375, height: 812 });
+  await page.goto('http://127.0.0.1:4173/');
+  await page.locator('#answers button').filter({ hasText: 'Здравствуйте!' }).click();
+  await page.locator('#a2Tab').click();
+  await page.locator('#nav button').first().click();
+  await page.getByRole('button', { name: 'Вчера я работал дома.' }).click();
+  await page.locator('#a2ReadingTab').click();
+  await page.locator('#a2Passages section').first().getByRole('button', { name: 'كتبت رسالة إلى عميل' }).click();
+  await page.locator('#a2ListeningTab').click();
+  await page.locator('#a2Listening section').first().getByRole('button', { name: 'أمس عملت في المنزل' }).click();
+  await page.reload();
+  await expect(page.locator('#summary')).toContainText('1 من 12');
+  await page.locator('#a2Tab').click();
+  await expect(page.locator('#nav button').first()).toContainText('✓');
+  await page.locator('#a2ReadingTab').click();
+  await expect(page.locator('#a2Passages section h3').first()).toContainText('✓');
+  await page.locator('#a2ListeningTab').click();
+  await expect(page.locator('#a2Listening section h3').first()).toContainText('✓');
+  const overflow = await page.evaluate(() => document.documentElement.scrollWidth > innerWidth + 2);
+  expect(overflow).toBe(false);
+  expect(errors).toEqual([]);
+});
