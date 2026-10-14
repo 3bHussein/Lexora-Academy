@@ -405,3 +405,16 @@ test('English mode has no Arabic UI text across learning sections', async ({ pag
     })).toBe('');
   }
 });
+
+test('English LTR and Arabic RTL direction persists with Russian examples LTR', async ({ page }) => {
+  await page.goto('http://127.0.0.1:4173/');
+  await page.evaluate(() => localStorage.removeItem('lexoraLanguage'));
+  await page.reload();
+  await expect(page.locator('html')).toHaveAttribute('dir','ltr');
+  await page.locator('#lessonsTab').click();
+  await expect(page.locator('#lesson .ru').first()).toHaveCSS('direction','ltr');
+  await page.locator('#academyLanguage').selectOption('ar');
+  await expect(page.locator('html')).toHaveAttribute('dir','rtl');
+  await page.locator('#lessonsTab').click();
+  await expect(page.locator('#lesson .ru').first()).toHaveCSS('direction','ltr');
+});
