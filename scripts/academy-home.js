@@ -72,12 +72,32 @@ a2ExamTab:["📋","اختبار A2","اختبار شامل"],
 dashboardTab:["📊","لوحة التقدم","تابع إنجازاتك"],
 backupTab:["☁️","نسخ واستعادة التقدم","احفظ بياناتك"]
 };
-sidebarOrder.forEach((id,i)=>{const button=$("#"+id);if(!button)return;const [ico,label,desc]=labels[id];button.replaceChildren();const icon=document.createElement("span");icon.className="menu-ico";icon.textContent=ico;const copy=document.createElement("span");copy.className="menu-copy";const title=document.createElement("strong");title.textContent=label;const small=document.createElement("small");small.textContent=desc;copy.append(title,small);button.append(icon,copy);sidebar.append(button);if(i===8||i===10){const hr=document.createElement("hr");sidebar.append(hr)}});
+const englishLabels={
+homeTab:["Home","Overview of your journey"],
+alphabetTab:["Start from Zero","Letters and pronunciation"],
+lessonsTab:["A1 Lessons","Russian language foundations"],
+readingTab:["A1 Reading","Texts and practice"],
+a2Tab:["A2 Lessons","Expand your knowledge"],
+a2ReadingTab:["A2 Reading","Intermediate reading"],
+a2DialoguesTab:["A2 Conversations","Everyday situations"],
+a2ListeningTab:["A2 Listening","Listening practice"],
+a2ExamTab:["A2 Exam","Comprehensive review"],
+dashboardTab:["Progress Dashboard","Track your achievements"],
+backupTab:["Backup & Restore","Keep your progress safe"]
+};
+sidebarOrder.forEach((id,i)=>{const button=$("#"+id);if(!button)return;const [ico,arabicLabel,arabicDesc]=labels[id];const [label,desc]=isArabic()?[arabicLabel,arabicDesc]:englishLabels[id];button.replaceChildren();const icon=document.createElement("span");icon.className="menu-ico";icon.textContent=ico;const copy=document.createElement("span");copy.className="menu-copy";const title=document.createElement("strong");title.textContent=label;const small=document.createElement("small");small.textContent=desc;copy.append(title,small);button.append(icon,copy);sidebar.append(button);if(i===8||i===10){const hr=document.createElement("hr");sidebar.append(hr)}});
 const lessonHeading=sidebar.querySelector("h2");const lessonProgress=sidebar.querySelector("#progress");const lessonSummary=sidebar.querySelector("#summary");const lessonNav=sidebar.querySelector("#nav");
 const lessonBox=document.createElement("div");lessonBox.className="lesson-submenu";[lessonHeading,lessonProgress,lessonSummary,lessonNav].forEach(el=>{if(el)lessonBox.append(el)});$("#lessonsTab").after(lessonBox);
 sidebar.querySelectorAll("hr").forEach(hr=>{if(hr.nextElementSibling?.id==="dashboardTab"||hr.nextElementSibling?.id==="backupTab")return;hr.remove()});
 function activateMenu(id){sidebar.querySelectorAll("button").forEach(b=>b.classList.toggle("active",b.id===id));document.body.classList.toggle("on-home",id==="homeTab");document.body.classList.toggle("on-lessons",id==="lessonsTab"||id==="a2Tab")}
 sidebarOrder.forEach(id=>{const button=$("#"+id);if(!button)return;button.addEventListener("click",()=>activateMenu(id))});
+const languageWrap=document.createElement("div");languageWrap.className="language-switch";languageWrap.innerHTML='<span>🌐</span><label for="academyLanguage">Language</label><select id="academyLanguage" aria-label="Website language"><option value="en">English</option><option value="ar">العربية</option></select>';
+sidebar.querySelector(".brand-caption").after(languageWrap);
+const langSelect=languageWrap.querySelector("select");langSelect.value=isArabic()?"ar":"en";
+langSelect.onchange=()=>{localStorage.setItem("lexoraLanguage",langSelect.value);location.reload()};
+document.documentElement.lang=isArabic()?"ar":"en";
+document.documentElement.dir=isArabic()?"rtl":"ltr";
+if(!isArabic()){$(".brand-caption").textContent="Learn Russian step by step";if(lessonHeading)lessonHeading.textContent="Current level lessons"}
 $("#homeTab").onclick=showHome;
 $("#alphabetTab").onclick=showAlphabet;
 showHome();
