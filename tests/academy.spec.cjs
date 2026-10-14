@@ -387,3 +387,21 @@ test('English is the default language and switching to Arabic persists', async (
   await page.reload();
   await expect(page.locator('#academyLanguage')).toHaveValue('ar');
 });
+
+test('English mode has no Arabic UI text across learning sections', async ({ page }) => {
+  await page.goto('http://127.0.0.1:4173/');
+  await page.evaluate(() => localStorage.removeItem('lexoraLanguage'));
+  await page.reload();
+  for (const id of ['homeTab','alphabetTab','vocabTab','lessonsTab','readingTab','a2Tab','a2ReadingTab','a2DialoguesTab','a2ListeningTab','a2ExamTab','dashboardTab','backupTab']) {
+    await page.locator('#'+id).click();
+    await expect.poll(async () => page.locator('body').evaluate(el => {
+      const walker=document.createTreeWalker(el,NodeFilter.SHOW_TEXT);
+      let n,found=[];
+      while((n=walker.nextNode())){
+        if(n.parentElement?.closest('script,style,[lang="ru"],.ru'))continue;
+        if(/[\u0600-\u06ff]/.test(n.nodeValue))found.push(n.nodeValue.trim().slice(0,80));
+      }
+      return found.join(' | ');
+    })).toBe('');
+  }
+});
