@@ -3,7 +3,7 @@ a1Reading:[
 ["Meeting in Moscow","Hi! My name is Anna. I am from Russia. This is my friend Omar. He is from Egypt.","Where is Omar from?",["Egypt","Russia"]],
 ["Introductions at the Office","Hello! My name is Ivan. What is your name? — My name is Anna. Nice to meet you!","What is the man's name?",["Ivan","Anna"]],
 ["At the Café","— Good afternoon! — Hello! May I have tea? — Yes, of course. — Thank you!","What did the customer order?",["Coffee","Tea"]],
-["Finding the Metro","— Excuse me, where is the metro? — The metro is over there. — Thank you! — You're welcome.","What is the person looking for?",["The metro","A restaurant"]]
+["Finding the Metro","— Excuse me, where is the metro? — The metro is over there. — Thank you! — You're welcome.","What is the person looking for?",["The metro","The price"]]
 ],
 a2Lessons:[
 ["Russian Past Tense","I worked at home yesterday.","She read a book.","Which sentence is in the past tense?","The past tense often ends in -л for masculine subjects and -ла for feminine subjects.","Write: I worked at home yesterday."],
