@@ -25,7 +25,7 @@ function addAudio(root){
   btn.type="button";btn.className="russian-audio-btn";
   const ar=localStorage.getItem("lexoraLanguage")==="ar";
   btn.textContent=ar?"🔊 استمع":"🔊 Listen";
-  btn.setAttribute("aria-label",(ar?"استمع إلى ":"Listen to ")+phrase);
+  btn.setAttribute("aria-label",ar?"تشغيل النطق الروسي":"Play Russian pronunciation");
   btn.onclick=()=>{const src=fileFor(phrase);if(src)new Audio(src).play().catch(()=>{btn.textContent=ar?"الصوت غير متاح":"Audio unavailable"})};
   const refresh=()=>{const src=fileFor(phrase);btn.disabled=!src;btn.title=src?"":ar?"التسجيل قيد التجهيز":"Recording is being prepared"};
   refresh();window.addEventListener("lexora-audio-ready",refresh);
