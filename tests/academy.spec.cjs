@@ -100,3 +100,24 @@ test('A2 lessons navigation, writing and saved progress', async ({ page }) => {
   await expect(page.locator('#nav button')).toHaveCount(12);
   expect(errors).toEqual([]);
 });
+
+test('A2 reading lab saves comprehension progress separately', async ({ page }) => {
+  const errors = [];
+  page.on('pageerror', e => errors.push(e.message));
+  await page.goto('http://127.0.0.1:4173/');
+  await page.locator('#a2ReadingTab').click();
+  await expect(page.locator('#a2Passages section')).toHaveCount(5);
+  for (let i = 0; i < 5; i++) {
+    const passage = page.locator('#a2Passages section').nth(i);
+    await passage.locator('summary').click();
+    await expect(passage.locator('details p')).toBeVisible();
+    await passage.locator('button').first().click();
+    await expect(passage.locator('[aria-live]')).toContainText('فهم ممتاز');
+  }
+  await page.reload();
+  await page.locator('#a2ReadingTab').click();
+  await expect(page.locator('#a2Passages section h3').first()).toContainText('✓');
+  await page.locator('#readingTab').click();
+  await expect(page.locator('#passages section')).toHaveCount(4);
+  expect(errors).toEqual([]);
+});
