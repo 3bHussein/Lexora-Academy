@@ -21,6 +21,8 @@ jobs:
           node --check neural-audio.js
           node --check a2-neural-audio.js
           node --check curriculum/a1-notes.js
+          node --check curriculum/a1-alphabet.js
+          node --check scripts/academy-home.js
           node --check curriculum/a1-reading.js
           node --check curriculum/a2-lessons.js
           node --check curriculum/a2-reading.js
