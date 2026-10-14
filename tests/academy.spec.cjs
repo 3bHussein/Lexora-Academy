@@ -239,3 +239,38 @@ test('unified dashboard reports saved A1/A2 progress and exam score', async ({ p
   await expect(page.locator('#dashboardStats section').nth(6)).toContainText('13 / 16');
   expect(errors).toEqual([]);
 });
+
+test('progress backup exports and restores safely without losing unrelated data', async ({ page }) => {
+  const errors = [];
+  page.on('pageerror', error => errors.push(error.message));
+  await page.goto('http://127.0.0.1:4173/');
+  await page.evaluate(() => {
+    localStorage.setItem('lexoraA1done', JSON.stringify([0, 2]));
+    localStorage.setItem('lexoraA2exam', JSON.stringify({ score: 14, total: 16 }));
+    localStorage.setItem('unrelated', 'keep');
+  });
+  await page.locator('#backupTab').click();
+  const downloadPromise = page.waitForEvent('download');
+  await page.locator('#backupExport').click();
+  const download = await downloadPromise;
+  expect(download.suggestedFilename()).toBe('lexora-progress.json');
+  await page.evaluate(() => localStorage.setItem('lexoraA1done', '[]'));
+  page.once('dialog', dialog => dialog.accept());
+  await page.locator('#backupImport').setInputFiles({
+    name: 'progress.json',
+    mimeType: 'application/json',
+    buffer: Buffer.from(JSON.stringify({format:'lexora-progress',version:1,progress:{lexoraA1done:[0,2],lexoraA2exam:{score:14,total:16}}}))
+  });
+  await page.locator('#backupRestore').click();
+  await expect(page.locator('#backupFeedback')).toContainText('تمت الاستعادة');
+  expect(await page.evaluate(() => JSON.parse(localStorage.getItem('lexoraA1done')))).toEqual([0,2]);
+  expect(await page.evaluate(() => localStorage.getItem('unrelated'))).toBe('keep');
+  await page.locator('#backupImport').setInputFiles({
+    name: 'invalid.json',
+    mimeType: 'application/json',
+    buffer: Buffer.from(JSON.stringify({format:'lexora-progress',version:1,progress:{evil:'yes'}}))
+  });
+  await page.locator('#backupRestore').click();
+  await expect(page.locator('#backupFeedback')).toContainText('غير صالحة');
+  expect(errors).toEqual([]);
+});
