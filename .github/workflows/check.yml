@@ -8,16 +8,27 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
       - uses: actions/setup-python@v5
         with:
           python-version: '3.12'
-      - name: Validate source files
+      - name: Validate Python source
+        run: python -m py_compile scripts/generate_audio.py
+      - name: Validate all JavaScript including inline page code
         run: |
-          python -m py_compile scripts/generate_audio.py
+          node --check neural-audio.js
+          node --check curriculum/a1-notes.js
+          node --check curriculum/a1-reading.js
           python - <<'PY'
           from pathlib import Path
-          assert Path('index.html').exists()
-          assert Path('requirements-audio.txt').exists()
-          assert 'Lexora' in Path('index.html').read_text(encoding='utf-8')
-          print('Source checks passed')
+          import re
+          page = Path('index.html').read_text(encoding='utf-8')
+          scripts = re.findall(r'<script(?:\s[^>]*)?>(.*?)</script>', page, re.S)
+          assert scripts, 'Missing inline app script'
+          Path('/tmp/lexora-inline.js').write_text('\n'.join(scripts), encoding='utf-8')
+          for src in re.findall(r'<script\s+src="([^"]+)"', page):
+              assert Path(src).is_file(), f'Missing JavaScript asset: {src}'
           PY
+          node --check /tmp/lexora-inline.js
