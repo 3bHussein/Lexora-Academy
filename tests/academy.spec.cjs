@@ -76,3 +76,27 @@ test('all reading passages and translation controls render', async ({ page }) =>
     await expect(passage.locator('button')).toHaveCount(2);
   }
 });
+
+test('A2 lessons navigation, writing and saved progress', async ({ page }) => {
+  const errors = [];
+  page.on('pageerror', error => errors.push(error.message));
+  await page.goto('http://127.0.0.1:4173/');
+  await page.locator('#a2Tab').click();
+  await expect(page.locator('#nav button')).toHaveCount(8);
+  for (let i = 0; i < 8; i++) {
+    await page.locator('#nav button').nth(i).click();
+    const expected = await page.evaluate(index => window.LEXORA_A2[index].writingAnswer, i);
+    await page.locator('#a2Writing').fill(expected);
+    await page.locator('#a2Check').click();
+    await expect(page.locator('#a2Feedback')).toContainText('ممتاز');
+  }
+  await page.locator('#nav button').first().click();
+  await page.getByRole('button', { name: 'Вчера я работал дома.' }).click();
+  await expect(page.locator('[aria-live]').first()).toContainText('إجابة صحيحة');
+  await page.reload();
+  await page.locator('#a2Tab').click();
+  await expect(page.locator('#nav button').first()).toContainText('✓');
+  await page.locator('#lessonsTab').click();
+  await expect(page.locator('#nav button')).toHaveCount(12);
+  expect(errors).toEqual([]);
+});
