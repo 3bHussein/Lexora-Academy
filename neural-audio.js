@@ -1,1 +1,26 @@
-window.LEXORA_AUDIO = {};
+window.LEXORA_AUDIO = {
+  "Привет!": "audio/neural/a1-001.mp3",
+  "Здравствуйте!": "audio/neural/a1-002.mp3",
+  "Меня зовут Анна.": "audio/neural/a1-003.mp3",
+  "Как вас зовут?": "audio/neural/a1-004.mp3",
+  "Спасибо!": "audio/neural/a1-005.mp3",
+  "Извините.": "audio/neural/a1-006.mp3",
+  "Да.": "audio/neural/a1-007.mp3",
+  "Нет.": "audio/neural/a1-008.mp3",
+  "Я студент.": "audio/neural/a1-009.mp3",
+  "Вы инженер.": "audio/neural/a1-010.mp3",
+  "Я из Египта.": "audio/neural/a1-011.mp3",
+  "Я говорю по-русски.": "audio/neural/a1-012.mp3",
+  "Один, два, три.": "audio/neural/a1-013.mp3",
+  "Десять.": "audio/neural/a1-014.mp3",
+  "Где метро?": "audio/neural/a1-015.mp3",
+  "Что это?": "audio/neural/a1-016.mp3",
+  "Это моя мама.": "audio/neural/a1-017.mp3",
+  "Это мой брат.": "audio/neural/a1-018.mp3",
+  "Я хочу чай.": "audio/neural/a1-019.mp3",
+  "Можно воду?": "audio/neural/a1-020.mp3",
+  "Сегодня понедельник.": "audio/neural/a1-021.mp3",
+  "Сейчас два часа.": "audio/neural/a1-022.mp3",
+  "Сколько это стоит?": "audio/neural/a1-023.mp3",
+  "Это дорого.": "audio/neural/a1-024.mp3"
+};
