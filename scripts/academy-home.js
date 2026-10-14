@@ -50,7 +50,29 @@ function showAlphabet(){
   audio.querySelector("#alphabetAudio").onclick=()=>{const src=window.LEXORA_AUDIO?.["Привет!"];if(!src){audio.querySelector("#alphabetAudioFeedback").textContent="التسجيل غير متوفر حاليًا";return}new Audio(src).play().catch(()=>{audio.querySelector("#alphabetAudioFeedback").textContent="تعذر تشغيل الصوت"})};
   const next=document.createElement("button");next.textContent="التالي: درس التحية والتعارف ←";next.onclick=()=>$("#lessonsTab").click();main.append(next);
 }
+const sidebar=document.querySelector("aside");
+const sidebarOrder=["homeTab","alphabetTab","lessonsTab","readingTab","a2Tab","a2ReadingTab","a2DialoguesTab","a2ListeningTab","a2ExamTab","dashboardTab","backupTab"];
+const labels={
+homeTab:["🏠","الرئيسية","نظرة عامة على رحلتك"],
+alphabetTab:["🔤","البداية من الصفر","الحروف والنطق"],
+lessonsTab:["📘","دروس A1","أساسيات اللغة الروسية"],
+readingTab:["📄","قراءة A1","نصوص وتمارين"],
+a2Tab:["📚","دروس A2","توسيع المعرفة"],
+a2ReadingTab:["📕","قراءة A2","نصوص أكثر تقدمًا"],
+a2DialoguesTab:["💬","محادثات A2","مواقف من الحياة اليومية"],
+a2ListeningTab:["🎧","استماع A2","تدريبات الاستماع"],
+a2ExamTab:["📋","اختبار A2","اختبار شامل"],
+dashboardTab:["📊","لوحة التقدم","تابع إنجازاتك"],
+backupTab:["☁️","نسخ واستعادة التقدم","احفظ بياناتك"]
+};
+sidebarOrder.forEach((id,i)=>{const button=$("#"+id);if(!button)return;const [ico,label,desc]=labels[id];button.replaceChildren();const icon=document.createElement("span");icon.className="menu-ico";icon.textContent=ico;const copy=document.createElement("span");copy.className="menu-copy";const title=document.createElement("strong");title.textContent=label;const small=document.createElement("small");small.textContent=desc;copy.append(title,small);button.append(icon,copy);sidebar.append(button);if(i===8||i===10){const hr=document.createElement("hr");sidebar.append(hr)}});
+const lessonHeading=sidebar.querySelector("h2");const lessonProgress=sidebar.querySelector("#progress");const lessonSummary=sidebar.querySelector("#summary");const lessonNav=sidebar.querySelector("#nav");
+const lessonBox=document.createElement("div");lessonBox.className="lesson-submenu";[lessonHeading,lessonProgress,lessonSummary,lessonNav].forEach(el=>{if(el)lessonBox.append(el)});$("#lessonsTab").after(lessonBox);
+sidebar.querySelectorAll("hr").forEach(hr=>{if(hr.nextElementSibling?.id==="dashboardTab"||hr.nextElementSibling?.id==="backupTab")return;hr.remove()});
+function activateMenu(id){sidebar.querySelectorAll("button").forEach(b=>b.classList.toggle("active",b.id===id));document.body.classList.toggle("on-home",id==="homeTab");document.body.classList.toggle("on-lessons",id==="lessonsTab"||id==="a2Tab")}
+sidebarOrder.forEach(id=>{const button=$("#"+id);if(!button)return;button.addEventListener("click",()=>activateMenu(id))});
 $("#homeTab").onclick=showHome;
 $("#alphabetTab").onclick=showAlphabet;
 showHome();
+activateMenu("homeTab");
 })();
