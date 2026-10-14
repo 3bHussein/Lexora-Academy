@@ -118,3 +118,21 @@ html[lang="en"] main .ru{direction:ltr;text-align:left}
 html[lang="ar"] .vocab-card{align-items:flex-end}
 @media(max-width:950px){.vocab-cards{grid-template-columns:repeat(2,minmax(0,1fr))}}
 @media(max-width:420px){.vocab-cards{grid-template-columns:1fr}}
+
+/* Directional layout: English is LTR, Arabic is RTL; Russian text remains LTR. */
+html[lang="en"]{direction:ltr}
+html[lang="ar"]{direction:rtl}
+html[lang="en"] .layout,html[lang="ar"] .layout{direction:ltr;grid-template-columns:320px minmax(0,1fr)}
+html[lang="ar"] .layout{direction:rtl}
+html[lang="en"] aside,html[lang="en"] main{direction:ltr;text-align:left}
+html[lang="ar"] aside,html[lang="ar"] main{direction:rtl;text-align:right}
+html[lang="en"] aside{grid-column:1;grid-row:1}
+html[lang="en"] main{grid-column:2;grid-row:1}
+html[lang="ar"] aside{grid-column:1;grid-row:1}
+html[lang="ar"] main{grid-column:2;grid-row:1}
+html[lang="en"] .ru,html[lang="ar"] .ru,[lang="ru"]{direction:ltr;text-align:left;unicode-bidi:isolate}
+html[lang="en"] .vocab-card{align-items:flex-start;text-align:left}
+html[lang="ar"] .vocab-card{align-items:flex-end;text-align:right}
+.alphabet-play{margin-top:10px;border:0;border-radius:10px;background:#e8f3ff;color:#0b5bac;padding:8px 12px;font-weight:700;cursor:pointer}
+.alphabet-play:disabled{opacity:.65;cursor:not-allowed}
+@media(max-width:800px){html[lang="en"] .layout,html[lang="ar"] .layout{display:block}html[lang="en"] aside,html[lang="ar"] aside,html[lang="en"] main,html[lang="ar"] main{grid-column:auto;grid-row:auto}}
