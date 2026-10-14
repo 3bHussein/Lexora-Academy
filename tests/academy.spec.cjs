@@ -121,3 +121,21 @@ test('A2 reading lab saves comprehension progress separately', async ({ page }) 
   await expect(page.locator('#passages section')).toHaveCount(4);
   expect(errors).toEqual([]);
 });
+
+test('A2 dialogue practice, translations and progress survive reload', async ({ page }) => {
+  const errors = [];
+  page.on('pageerror', error => errors.push(error.message));
+  await page.goto('http://127.0.0.1:4173/');
+  await page.locator('#a2DialoguesTab').click();
+  await expect(page.locator('#a2Dialogues section')).toHaveCount(4);
+  const first = page.locator('#a2Dialogues section').first();
+  await expect(first.locator('details')).toHaveCount(3);
+  await first.locator('summary').first().click();
+  await expect(first.locator('details p').first()).toBeVisible();
+  await first.getByRole('button', { name: 'Сегодня мой первый день.' }).click();
+  await expect(first.locator('[aria-live]')).toContainText('إجابة صحيحة');
+  await page.reload();
+  await page.locator('#a2DialoguesTab').click();
+  await expect(page.locator('#a2Dialogues section h3').first()).toContainText('✓');
+  expect(errors).toEqual([]);
+});
