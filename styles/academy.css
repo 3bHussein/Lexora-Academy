@@ -105,3 +105,16 @@ html[lang="en"] .quick-arrow{margin-left:auto;margin-right:0}
 html[lang="en"] main:not(:has(.hero)){direction:ltr;text-align:left}
 html[lang="en"] main .ru{direction:ltr;text-align:left}
 @media(max-width:720px){.language-switch{margin:8px 0 12px}}
+
+.vocab-topics{display:flex;flex-wrap:wrap;gap:9px;margin:20px 0}
+.vocab-topics button{background:#fff;color:#12335b;border:1px solid #d5e4f3;border-radius:30px;padding:10px 15px;font-weight:750;cursor:pointer}
+.vocab-topics button.active{background:#1678e7;color:#fff;border-color:#1678e7}
+.vocab-cards{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:14px}
+.vocab-card{background:#fff;border:1px solid #e1e9f5;border-radius:17px;padding:18px;display:flex;flex-direction:column;align-items:flex-start;gap:10px;box-shadow:0 5px 20px #0d31570a}
+.vocab-card strong{font-size:1.45rem;color:#132c52}
+.vocab-card p{margin:0;color:#526782}
+.vocab-card button{background:#e9f3ff;color:#0b62bd;border:0;border-radius:18px;padding:9px 12px;cursor:pointer}
+.vocab-card button:hover{background:#cce5ff}
+html[lang="ar"] .vocab-card{align-items:flex-end}
+@media(max-width:950px){.vocab-cards{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:420px){.vocab-cards{grid-template-columns:1fr}}
