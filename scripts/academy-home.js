@@ -115,7 +115,7 @@ const langSelect=languageWrap.querySelector("select");langSelect.value=isArabic(
 langSelect.onchange=()=>{localStorage.setItem("lexoraLanguage",langSelect.value);location.reload()};
 document.documentElement.lang=isArabic()?"ar":"en";
 document.documentElement.dir=isArabic()?"rtl":"ltr";
-if(!isArabic()){$(".brand-caption").textContent="Learn Russian step by step";if(lessonHeading)lessonHeading.textContent="Current level lessons"}
+if(!isArabic()){$(".brand-caption").textContent="Learn Russian step by step";if(lessonHeading)lessonHeading.textContent="Current level lessons";if(languageWrap.querySelector("label"))languageWrap.querySelector("label").textContent="Language"}
 $("#homeTab").onclick=showHome;
 $("#alphabetTab").onclick=showAlphabet;
 showHome();
