@@ -47,4 +47,5 @@ function showAlphabet(){
 }
 $("#homeTab").onclick=showHome;
 $("#alphabetTab").onclick=showAlphabet;
+showHome();
 })();
