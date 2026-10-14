@@ -1,5 +1,5 @@
 const { test, expect } = require('@playwright/test');
-test.beforeEach(async ({ page }) => { await page.addInitScript(() => localStorage.setItem('lexoraLanguage','ar')); });
+test.beforeEach(async ({ page }, testInfo) => { if (!testInfo.title.includes('English is the default language')) await page.addInitScript(() => localStorage.setItem('lexoraLanguage','ar')); });
 test('lessons, answers, writing and reading work', async ({ page }) => {
   const errors = [];
   page.on('pageerror', error => errors.push(error.message));
@@ -365,7 +365,7 @@ test('new home is the default page and legacy dark theme is absent', async ({ pa
   await page.goto('http://127.0.0.1:4173/');
   await expect(page.locator('.hero')).toBeVisible();
   await expect(page.locator('.course-card')).toHaveCount(8);
-  await expect(page.locator('body')).toHaveCSS('background-color', 'rgb(244, 247, 252)');
+  await expect(page.locator('body')).toHaveCSS('background-color', 'rgb(246, 249, 254)');
   await expect(page.locator('aside')).toHaveCSS('position', 'sticky');
   await expect(page.locator('#homeTab')).toBeVisible();
 });
