@@ -136,3 +136,5 @@ html[lang="ar"] .vocab-card{align-items:flex-end;text-align:right}
 .alphabet-play{margin-top:10px;border:0;border-radius:10px;background:#e8f3ff;color:#0b5bac;padding:8px 12px;font-weight:700;cursor:pointer}
 .alphabet-play:disabled{opacity:.65;cursor:not-allowed}
 @media(max-width:800px){html[lang="en"] .layout,html[lang="ar"] .layout{display:block}html[lang="en"] aside,html[lang="ar"] aside,html[lang="en"] main,html[lang="ar"] main{grid-column:auto;grid-row:auto}}
+
+.russian-audio-btn{display:inline-flex;align-items:center;margin:6px 8px;border:0;border-radius:10px;background:#e8f3ff;color:#1255a1;padding:7px 11px;font:inherit;font-size:.82rem;cursor:pointer}.russian-audio-btn:disabled{opacity:.55;cursor:not-allowed}
