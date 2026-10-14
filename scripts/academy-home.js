@@ -64,7 +64,38 @@ function showAlphabet(){
   box.append(playLetter);grid.append(box)});main.append(grid);
   const practice=document.createElement("section");practice.className="example";practice.innerHTML='<h3>✍️ أول تدريب</h3><p>اكتب الكلمة الروسية التي تعني «ماما» كما تظهر هنا: <b lang="ru" dir="ltr">мама</b></p><input id="alphabetWriting" dir="ltr" autocomplete="off" placeholder="اكتب мама"><button id="alphabetCheck" type="button" style="margin-top:10px">تحقق من الإجابة</button><p id="alphabetFeedback" aria-live="polite"></p>';
   main.append(practice);practice.querySelector("#alphabetCheck").onclick=()=>{const ok=practice.querySelector("#alphabetWriting").value.trim().toLocaleLowerCase("ru")==="мама";const feedback=practice.querySelector("#alphabetFeedback");feedback.textContent=ok?"✓ ممتاز! كتبت أول كلمة روسية بشكل صحيح.":"جرّب تاني: мама — م ا م ا";feedback.className=ok?"ok":"bad";if(ok)localStorage.setItem("lexoraAlphabetStarted","true")};
-  const audio=document.createElement("section");audio.className="example";audio.innerHTML='<h3>🔊 أول جملة روسية</h3><p class="ru">Привет!</p><p>مرحبًا (غير رسمي)</p><button id="alphabetAudio">▶ استمع للصوت الطبيعي</button><p id="alphabetAudioFeedback" aria-live="polite"></p>';main.append(audio);
+  const letterQuiz=document.createElement("section");letterQuiz.className="example alphabet-quiz";
+ const quizTitle=document.createElement("h3");quizTitle.textContent=bi("🎯 Letter recognition practice","🎯 تدريب تمييز الحروف");
+ const quizHint=document.createElement("p");quizHint.textContent=bi("Listen to a letter, then choose its Cyrillic symbol. Complete five rounds.","استمع إلى الحرف ثم اختر رمزه الروسي. أكمل خمس جولات.");
+ const quizProgress=document.createElement("p");quizProgress.className="meta";quizProgress.setAttribute("aria-live","polite");
+ const quizChoices=document.createElement("div");quizChoices.className="alphabet-quiz-choices";
+ const quizFeedback=document.createElement("p");quizFeedback.setAttribute("aria-live","polite");
+ const hear=document.createElement("button");hear.type="button";hear.textContent=bi("🔊 Play letter","🔊 اسمع الحرف");
+ letterQuiz.append(quizTitle,quizHint,quizProgress,hear,quizChoices,quizFeedback);main.append(letterQuiz);
+ const letters=window.LEXORA_ALPHABET.map(x=>x.letter.split(" ")[0]);let round=0,score=0,answer="";
+ function newRound(){
+  quizChoices.replaceChildren();quizFeedback.textContent="";
+  if(round===5){
+   quizProgress.textContent=bi("Completed: ","انتهى التدريب: ")+score+"/5";
+   const retry=document.createElement("button");retry.type="button";retry.textContent=bi("Try again","أعد المحاولة");retry.onclick=()=>{round=0;score=0;newRound()};quizChoices.append(retry);
+   hear.disabled=true;return;
+  }
+  hear.disabled=false;answer=letters[(round*7+2)%letters.length];
+  quizProgress.textContent=bi("Round ","الجولة ")+(round+1)+"/5";
+  const distractors=[letters[(round*7+5)%letters.length],letters[(round*7+11)%letters.length]];
+  const options=[answer,...distractors].sort((a,b)=>((letters.indexOf(a)+round)%3)-((letters.indexOf(b)+round)%3));
+  options.forEach(letter=>{const button=document.createElement("button");button.type="button";button.textContent=letter;button.lang="ru";button.onclick=()=>{
+   const correct=letter===answer;if(correct)score++;
+   quizFeedback.textContent=correct?bi("✓ Correct!","✓ إجابة صحيحة"):bi("✗ The correct letter is ","✗ الحرف الصحيح هو ")+(!correct?answer:"");
+   quizChoices.querySelectorAll("button").forEach(b=>b.disabled=true);
+   const next=document.createElement("button");next.type="button";next.textContent=bi("Next round →","الجولة التالية ←");next.onclick=()=>{round++;newRound()};quizChoices.append(next);
+   const best=Number(localStorage.getItem("lexoraAlphabetQuizBest")||"0");
+   if(round===4)localStorage.setItem("lexoraAlphabetQuizBest",String(Math.max(best,score)));
+  };quizChoices.append(button)});
+ }
+ hear.onclick=()=>{const src=window.LEXORA_ALPHABET_AUDIO?.[answer];if(!src){quizFeedback.textContent=bi("Audio is being prepared.","التسجيل قيد التجهيز");return}new Audio(src).play().catch(()=>{quizFeedback.textContent=bi("Could not play recording.","تعذر تشغيل التسجيل")})};
+ newRound();
+ const audio=document.createElement("section");audio.className="example";audio.innerHTML='<h3>🔊 أول جملة روسية</h3><p class="ru">Привет!</p><p>مرحبًا (غير رسمي)</p><button id="alphabetAudio">▶ استمع للصوت الطبيعي</button><p id="alphabetAudioFeedback" aria-live="polite"></p>';main.append(audio);
   audio.querySelector("#alphabetAudio").onclick=()=>{const src=window.LEXORA_AUDIO?.["Привет!"];if(!src){audio.querySelector("#alphabetAudioFeedback").textContent="التسجيل غير متوفر حاليًا";return}new Audio(src).play().catch(()=>{audio.querySelector("#alphabetAudioFeedback").textContent="تعذر تشغيل الصوت"})};
   if(!isArabic()){
   h.textContent="🔤 Start from Zero — Russian A1";
