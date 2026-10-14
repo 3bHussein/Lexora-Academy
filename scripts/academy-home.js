@@ -95,6 +95,54 @@ function showAlphabet(){
  }
  hear.onclick=()=>{const src=window.LEXORA_ALPHABET_AUDIO?.[answer];if(!src){quizFeedback.textContent=bi("Audio is being prepared.","التسجيل قيد التجهيز");return}new Audio(src).play().catch(()=>{quizFeedback.textContent=bi("Could not play recording.","تعذر تشغيل التسجيل")})};
  newRound();
+ const writingQuiz=document.createElement("section");writingQuiz.className="example alphabet-writing";
+ const writingHeading=document.createElement("h3");writingHeading.textContent=bi("✍️ Write Russian letters","✍️ اكتب الحروف الروسية");
+ const writingInfo=document.createElement("p");writingInfo.textContent=bi("Hear a letter and type its Cyrillic character. Complete five rounds.","اسمع الحرف واكتب رمزه الروسي. أكمل خمس جولات.");
+ const writingProgress=document.createElement("p");writingProgress.className="meta";writingProgress.setAttribute("aria-live","polite");
+ const writingListen=document.createElement("button");writingListen.type="button";writingListen.textContent=bi("🔊 Hear letter","🔊 اسمع الحرف");
+ const writingInput=document.createElement("input");writingInput.type="text";writingInput.dir="ltr";writingInput.lang="ru";writingInput.autocomplete="off";writingInput.maxLength=2;writingInput.placeholder=bi("Type one Cyrillic letter","اكتب حرفًا روسيًا");
+ const writingCheck=document.createElement("button");writingCheck.type="button";writingCheck.textContent=bi("Check answer","تحقق من الإجابة");
+ const writingFeedback=document.createElement("p");writingFeedback.setAttribute("aria-live","polite");
+ writingQuiz.append(writingHeading,writingInfo,writingProgress,writingListen,writingInput,writingCheck,writingFeedback);main.append(writingQuiz);
+ const writingLetters=["А","М","О","Т","К"];let writingRound=0,writingScore=0;
+ const normalizeLetter=x=>x.trim().normalize("NFC").toLocaleUpperCase("ru");
+ function refreshWriting(){
+   writingInput.value="";writingInput.disabled=false;writingFeedback.textContent="";
+   if(writingRound===writingLetters.length){
+     writingProgress.textContent=bi("Completed: ","انتهى التدريب: ")+writingScore+"/5";
+     writingInput.disabled=true;writingListen.disabled=true;
+     writingCheck.textContent=bi("Try again","أعد المحاولة");
+     const best=Number(localStorage.getItem("lexoraAlphabetWritingBest")||"0");
+     localStorage.setItem("lexoraAlphabetWritingBest",String(Math.max(best,writingScore)));
+     return;
+   }
+   writingListen.disabled=false;
+   writingProgress.textContent=bi("Round ","الجولة ")+(writingRound+1)+"/5";
+   writingCheck.textContent=bi("Check answer","تحقق من الإجابة");
+ }
+ writingListen.onclick=()=>{
+   const key=writingLetters[writingRound];
+   const src=window.LEXORA_ALPHABET_AUDIO?.[key];
+   if(!src){writingFeedback.textContent=bi("Audio is being prepared.","التسجيل قيد التجهيز");return}
+   new Audio(src).play().catch(()=>{writingFeedback.textContent=bi("Could not play audio.","تعذر تشغيل الصوت")});
+ };
+ writingCheck.onclick=()=>{
+   if(writingRound===writingLetters.length){writingRound=0;writingScore=0;refreshWriting();return}
+   const expected=writingLetters[writingRound];
+   if(!writingInput.value.trim()){writingFeedback.textContent=bi("Type a letter first.","اكتب الحرف أولًا");return}
+   const correct=normalizeLetter(writingInput.value)===expected;
+   if(correct)writingScore++;
+   writingFeedback.textContent=correct?bi("✓ Correct!","✓ إجابة صحيحة"):bi("Correct letter: ","الحرف الصحيح: ")+expected;
+   writingRound++;writingInput.disabled=true;
+   writingCheck.textContent=bi("Next →","التالي ←");
+   writingCheck.onclick=()=>{
+     writingCheck.onclick=null;
+     refreshWriting();
+     writingCheck.onclick=writingSubmit;
+   };
+ };
+ const writingSubmit=writingCheck.onclick;
+ refreshWriting();
  const audio=document.createElement("section");audio.className="example";audio.innerHTML='<h3>🔊 أول جملة روسية</h3><p class="ru">Привет!</p><p>مرحبًا (غير رسمي)</p><button id="alphabetAudio">▶ استمع للصوت الطبيعي</button><p id="alphabetAudioFeedback" aria-live="polite"></p>';main.append(audio);
   audio.querySelector("#alphabetAudio").onclick=()=>{const src=window.LEXORA_AUDIO?.["Привет!"];if(!src){audio.querySelector("#alphabetAudioFeedback").textContent="التسجيل غير متوفر حاليًا";return}new Audio(src).play().catch(()=>{audio.querySelector("#alphabetAudioFeedback").textContent="تعذر تشغيل الصوت"})};
   if(!isArabic()){
