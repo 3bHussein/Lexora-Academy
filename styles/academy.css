@@ -72,3 +72,22 @@ aside h2{font-size:.78rem!important}
 @media(max-width:1300px){.stats-grid,.course-grid{grid-template-columns:repeat(2,minmax(0,1fr))!important}.hero-quote{display:none}}
 @media(max-width:720px){.layout{display:block!important}.hero{height:auto!important;min-height:270px!important;padding:28px 20px!important}.hero h1{font-size:2.2rem!important}.hero p{font-size:.96rem!important}.hero-actions button{min-width:0!important;min-height:46px!important}.stats-grid,.course-grid{grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:10px!important}.stat-card{padding:13px!important;grid-template-columns:45px minmax(0,1fr);gap:7px;min-height:130px!important}.stat-icon{width:43px!important;height:43px!important}.stat-copy h3{font-size:.75rem!important}.stat-copy strong{font-size:.84rem!important}.course-card{padding:13px!important;min-height:180px!important}.course-card button{min-width:0!important}.quick-grid{grid-template-columns:1fr}.section-heading{align-items:flex-start;flex-direction:column}aside{height:auto!important;position:relative!important}}
 @media(max-width:380px){.stats-grid,.course-grid{grid-template-columns:1fr!important}}
+
+/* Sidebar reference layout */
+aside .menu-copy{display:flex;flex-direction:column;align-items:flex-start;gap:4px;min-width:0;flex:1;text-align:right}
+aside .menu-copy strong{font-size:.96rem;line-height:1.3}
+aside .menu-copy small{font-size:.76rem;color:#aabbd3;font-weight:450;line-height:1.4}
+aside>button.active .menu-copy small{color:#d5e7ff}
+aside>button{justify-content:flex-start!important}
+aside>button::after{display:none!important}
+aside>button .menu-ico{font-size:1.7rem!important;flex-shrink:0}
+aside .lesson-submenu{display:none;margin:0 0 6px 0;padding:5px 0 8px;border-bottom:1px solid #355071}
+body.on-lessons aside .lesson-submenu{display:block}
+aside .lesson-submenu h2{display:none}
+aside .lesson-submenu #nav{max-height:230px!important;display:block}
+aside .lesson-submenu #nav button{width:100%;display:block;padding:9px 11px!important}
+aside .lesson-submenu progress{display:block}
+aside .lesson-submenu #summary{display:block}
+aside .brand{justify-content:flex-start!important;direction:ltr;flex-direction:row}
+aside .brand-caption{text-align:right!important}
+@media(max-width:720px){aside>button{width:100%!important;display:flex!important;margin:4px 0!important;padding:11px 13px!important}aside .lesson-submenu{display:none}body.on-lessons aside .lesson-submenu{display:block}aside .lesson-submenu #nav{display:flex!important;max-height:none!important;overflow-x:auto!important}aside .lesson-submenu #nav button{width:auto!important;flex-shrink:0}aside .brand{justify-content:center!important}aside .brand-caption{text-align:center!important}aside .menu-copy small{display:block}}
