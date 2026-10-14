@@ -52,9 +52,15 @@ function showAlphabet(){
   const grid=document.createElement("div");grid.className="alphabet-grid";
   window.LEXORA_ALPHABET.forEach(({letter,latin,ar})=>{const box=document.createElement("article");box.className="alphabet-card";const big=document.createElement("strong");big.textContent=letter;const pronunciation=document.createElement("div");pronunciation.textContent="صوت تقريبي: "+ar;const small=document.createElement("small");small.textContent="Latin: "+latin;box.append(big,pronunciation,small);
   const playLetter=document.createElement("button");playLetter.type="button";playLetter.className="alphabet-play";playLetter.textContent=isArabic()?"🔊 استمع للحرف":"🔊 Hear letter";
-  const letterKey=letter.split(" ")[0];const recording=window.LEXORA_ALPHABET_AUDIO?.[letterKey];
-  if(recording){playLetter.onclick=()=>new Audio(recording).play().catch(()=>{playLetter.textContent=isArabic()?"تعذر تشغيل الصوت":"Audio unavailable"})}
-  else{playLetter.disabled=true;playLetter.title=isArabic()?"التسجيل قيد الإعداد":"Recording being prepared";playLetter.textContent=isArabic()?"الصوت قريبًا":"Audio coming soon"}
+  const letterKey=letter.split(" ")[0];
+  const updateAudio=()=>{
+   const recording=window.LEXORA_ALPHABET_AUDIO?.[letterKey];
+   playLetter.disabled=!recording;
+   playLetter.title=recording?"":bi("Recording being prepared","التسجيل قيد الإعداد");
+   playLetter.textContent=recording?bi("🔊 Hear letter","🔊 استمع للحرف"):bi("Audio coming soon","الصوت قريبًا");
+   playLetter.onclick=recording?()=>new Audio(recording).play().catch(()=>{playLetter.textContent=bi("Audio unavailable","تعذر تشغيل الصوت")}):null;
+  };
+  updateAudio();window.addEventListener("lexora-audio-ready",updateAudio);
   box.append(playLetter);grid.append(box)});main.append(grid);
   const practice=document.createElement("section");practice.className="example";practice.innerHTML='<h3>✍️ أول تدريب</h3><p>اكتب الكلمة الروسية التي تعني «ماما» كما تظهر هنا: <b lang="ru" dir="ltr">мама</b></p><input id="alphabetWriting" dir="ltr" autocomplete="off" placeholder="اكتب мама"><button id="alphabetCheck" type="button" style="margin-top:10px">تحقق من الإجابة</button><p id="alphabetFeedback" aria-live="polite"></p>';
   main.append(practice);practice.querySelector("#alphabetCheck").onclick=()=>{const ok=practice.querySelector("#alphabetWriting").value.trim().toLocaleLowerCase("ru")==="мама";const feedback=practice.querySelector("#alphabetFeedback");feedback.textContent=ok?"✓ ممتاز! كتبت أول كلمة روسية بشكل صحيح.":"جرّب تاني: мама — م ا م ا";feedback.className=ok?"ok":"bad";if(ok)localStorage.setItem("lexoraAlphabetStarted","true")};
