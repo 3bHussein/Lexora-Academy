@@ -12,7 +12,7 @@ const courses=[
 ["💬","محادثات A2","4 محادثات واقعية","a2DialoguesTab","orange"],
 ["🎧","استماع A2","8 تدريبات استماع","a2ListeningTab","teal"],
 ["📋","اختبار A2","16 سؤالًا شاملًا","a2ExamTab","rose"],
-["📊","لوحة التقدم","تابع جميع إنجازاتك","dashboardTab","gold"]
+["🖼️","المفردات المصوّرة","64 كلمة في 8 موضوعات","vocabTab","gold"]
 ];
 function showHome(){
   $("#nav").innerHTML="";
@@ -37,7 +37,7 @@ function showHome(){
   if(!isArabic()){heading.querySelector("h2").textContent="⭐ Learning Sections";heading.querySelector("p").textContent="Choose where you want to continue"}
   const grid=document.createElement("div");grid.className="course-grid";
   courses.forEach(([icon,name,desc,id,tone])=>{const card=document.createElement("article");card.className="course-card tone-"+tone;const ico=document.createElement("span");ico.className="course-icon";ico.textContent=icon;const h=document.createElement("h3");h.textContent=name;const p=document.createElement("p");p.textContent=desc;const button=document.createElement("button");button.textContent="ابدأ التعلم ❯";if(id==="readingTab"||id==="a2ReadingTab")button.textContent="ابدأ القراءة ❯";if(id==="a2ListeningTab")button.textContent="ابدأ الاستماع ❯";if(id==="dashboardTab")button.textContent="عرض التقدم ❯";if(id==="a2ExamTab")button.textContent="ابدأ الاختبار ❯";button.onclick=()=>$("#"+id).click();card.append(ico,h,p,button);grid.append(card)});main.append(grid);
-  if(!isArabic()){const en=[["A1 Lessons","12 lessons to build your Russian foundation","Start Learning ❯"],["A1 Reading","4 texts and practice activities","Start Reading ❯"],["A2 Lessons","16 lessons to expand your knowledge","Start Learning ❯"],["A2 Reading","5 graded reading passages","Start Reading ❯"],["A2 Conversations","4 real-life conversations","Start Conversations ❯"],["A2 Listening","8 listening exercises","Start Listening ❯"],["A2 Exam","16 review questions","Start Exam ❯"],["Progress Dashboard","Track your achievements","View Progress ❯"]];grid.querySelectorAll(".course-card").forEach((card,i)=>{card.querySelector("h3").textContent=en[i][0];card.querySelector("p").textContent=en[i][1];card.querySelector("button").textContent=en[i][2]})}
+  if(!isArabic()){const en=[["A1 Lessons","12 lessons to build your Russian foundation","Start Learning ❯"],["A1 Reading","4 texts and practice activities","Start Reading ❯"],["A2 Lessons","16 lessons to expand your knowledge","Start Learning ❯"],["A2 Reading","5 graded reading passages","Start Reading ❯"],["A2 Conversations","4 real-life conversations","Start Conversations ❯"],["A2 Listening","8 listening exercises","Start Listening ❯"],["A2 Exam","16 review questions","Start Exam ❯"],["Visual Vocabulary","64 words across 8 topics","Explore Words ❯"]];grid.querySelectorAll(".course-card").forEach((card,i)=>{card.querySelector("h3").textContent=en[i][0];card.querySelector("p").textContent=en[i][1];card.querySelector("button").textContent=en[i][2]})}
   const quick=document.createElement("div");quick.className="quick-grid";[["☁️","نسخ واستعادة التقدم","قم بتصدير تقدمك أو استعادته على جهاز آخر","backupTab"],["⚙️","البداية من الصفر","ابدأ بالحروف الروسية والنطق قبل الدروس","alphabetTab"]].forEach(([icon,title,desc,id])=>{const button=document.createElement("button");button.className="quick-card";button.innerHTML='<span class="quick-icon"></span><span class="quick-copy"><strong></strong><small></small></span><span class="quick-arrow">❯</span>';button.querySelector(".quick-icon").textContent=icon;button.querySelector("strong").textContent=title;button.querySelector("small").textContent=desc;button.onclick=()=>$("#"+id).click();quick.append(button)});main.append(quick);
   if(!isArabic()){const en=[["Backup & Restore Progress","Export your progress or restore it on another device"],["Start from Zero","Learn the Russian alphabet and pronunciation first"]];quick.querySelectorAll(".quick-card").forEach((card,i)=>{card.querySelector("strong").textContent=en[i][0];card.querySelector("small").textContent=en[i][1]})}
 }
@@ -74,10 +74,11 @@ function showAlphabet(){
 const next=document.createElement("button");next.textContent="التالي: درس التحية والتعارف ←";next.onclick=()=>$("#lessonsTab").click();if(!isArabic())next.textContent="Next: Greetings & Introductions →";main.append(next);
 }
 const sidebar=document.querySelector("aside");
-const sidebarOrder=["homeTab","alphabetTab","lessonsTab","readingTab","a2Tab","a2ReadingTab","a2DialoguesTab","a2ListeningTab","a2ExamTab","dashboardTab","backupTab"];
+const sidebarOrder=["homeTab","alphabetTab","vocabTab","lessonsTab","readingTab","a2Tab","a2ReadingTab","a2DialoguesTab","a2ListeningTab","a2ExamTab","dashboardTab","backupTab"];
 const labels={
 homeTab:["🏠","الرئيسية","نظرة عامة على رحلتك"],
 alphabetTab:["🔤","البداية من الصفر","الحروف والنطق"],
+vocabTab:["🖼️","المفردات المصوّرة","64 كلمة في 8 موضوعات"],
 lessonsTab:["📘","دروس A1","أساسيات اللغة الروسية"],
 readingTab:["📄","قراءة A1","نصوص وتمارين"],
 a2Tab:["📚","دروس A2","توسيع المعرفة"],
@@ -91,6 +92,7 @@ backupTab:["☁️","نسخ واستعادة التقدم","احفظ بيانا�
 const englishLabels={
 homeTab:["Home","Overview of your journey"],
 alphabetTab:["Start from Zero","Letters and pronunciation"],
+vocabTab:["Visual Vocabulary","64 words in 8 themes"],
 lessonsTab:["A1 Lessons","Russian language foundations"],
 readingTab:["A1 Reading","Texts and practice"],
 a2Tab:["A2 Lessons","Expand your knowledge"],
