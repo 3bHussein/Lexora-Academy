@@ -274,3 +274,21 @@ test('progress backup exports and restores safely without losing unrelated data'
   await expect(page.locator('#backupFeedback')).toContainText('غير صالحة');
   expect(errors).toEqual([]);
 });
+
+test('A2 exam explains incorrect answers and clears review on retry', async ({ page }) => {
+  await page.goto('http://127.0.0.1:4173/');
+  await page.locator('#a2ExamTab').click();
+  for (let i = 0; i < 16; i++) {
+    const answer = await page.evaluate(index => index === 0 ? window.LEXORA_A2_EXAM[index].wrong : window.LEXORA_A2_EXAM[index].correct, i);
+    await page.locator('#a2Exam section').nth(i).getByRole('radio', { name: answer, exact: true }).check();
+  }
+  await page.locator('#a2ExamSubmit').click();
+  await expect(page.locator('#a2ExamResult')).toContainText('15/16');
+  await expect(page.locator('#a2ExamReview')).toContainText('راجع 1 إجابة');
+  await expect(page.locator('#a2ExamReview')).toContainText('الصحيح:');
+  const correct = await page.evaluate(() => window.LEXORA_A2_EXAM[0].correct);
+  await page.locator('#a2Exam section').first().getByRole('radio', { name: correct, exact: true }).check();
+  await page.locator('#a2ExamSubmit').click();
+  await expect(page.locator('#a2ExamReview')).toContainText('جميع الإجابات صحيحة');
+  await expect(page.locator('#a2ExamReview')).not.toContainText('إجابتك:');
+});
