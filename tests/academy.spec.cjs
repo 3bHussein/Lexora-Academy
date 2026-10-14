@@ -82,8 +82,8 @@ test('A2 lessons navigation, writing and saved progress', async ({ page }) => {
   page.on('pageerror', error => errors.push(error.message));
   await page.goto('http://127.0.0.1:4173/');
   await page.locator('#a2Tab').click();
-  await expect(page.locator('#nav button')).toHaveCount(8);
-  for (let i = 0; i < 8; i++) {
+  await expect(page.locator('#nav button')).toHaveCount(16);
+  for (let i = 0; i < 16; i++) {
     await page.locator('#nav button').nth(i).click();
     const expected = await page.evaluate(index => window.LEXORA_A2[index].writingAnswer, i);
     await page.locator('#a2Writing').fill(expected);
