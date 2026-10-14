@@ -434,3 +434,18 @@ test('alphabet recognition quiz works in English and stores score', async ({ pag
   await expect(quiz).toContainText('Completed:');
   await expect.poll(()=>page.evaluate(()=>localStorage.getItem('lexoraAlphabetQuizBest'))).not.toBeNull();
 });
+
+test('Cyrillic writing practice gives feedback and saves best score', async ({ page }) => {
+ await page.goto('http://127.0.0.1:4173/');
+ await page.locator('#alphabetTab').click();
+ const quiz=page.locator('.alphabet-writing');
+ await expect(quiz).toBeVisible();
+ for(const letter of ['А','М','О','Т','К']){
+   await quiz.locator('input').fill(letter);
+   await quiz.getByRole('button',{name:/Check answer|تحقق من الإجابة/}).click();
+   await expect(quiz).toContainText(/Correct|صحيحة/);
+   await quiz.getByRole('button',{name:/Next|التالي/}).click();
+ }
+ await expect(quiz).toContainText(/Completed|انتهى التدريب/);
+ await expect.poll(()=>page.evaluate(()=>localStorage.getItem('lexoraAlphabetWritingBest'))).toBe('5');
+});
