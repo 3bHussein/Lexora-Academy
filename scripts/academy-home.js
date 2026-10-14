@@ -126,8 +126,9 @@ function showAlphabet(){
    if(!src){writingFeedback.textContent=bi("Audio is being prepared.","التسجيل قيد التجهيز");return}
    new Audio(src).play().catch(()=>{writingFeedback.textContent=bi("Could not play audio.","تعذر تشغيل الصوت")});
  };
- writingCheck.onclick=()=>{
+ function writingSubmit(){
    if(writingRound===writingLetters.length){writingRound=0;writingScore=0;refreshWriting();return}
+   if(writingInput.disabled){refreshWriting();return}
    const expected=writingLetters[writingRound];
    if(!writingInput.value.trim()){writingFeedback.textContent=bi("Type a letter first.","اكتب الحرف أولًا");return}
    const correct=normalizeLetter(writingInput.value)===expected;
@@ -135,9 +136,13 @@ function showAlphabet(){
    writingFeedback.textContent=correct?bi("✓ Correct!","✓ إجابة صحيحة"):bi("Correct letter: ","الحرف الصحيح: ")+expected;
    writingRound++;writingInput.disabled=true;
    writingCheck.textContent=bi("Next →","التالي ←");
-   writingCheck.onclick=()=>{
-     writingCheck.onclick=null;
-     refreshWriting();
+   if(writingRound===writingLetters.length){
+     const best=Number(localStorage.getItem("lexoraAlphabetWritingBest")||"0");
+     localStorage.setItem("lexoraAlphabetWritingBest",String(Math.max(best,writingScore)));
+   }
+ }
+ writingCheck.onclick=writingSubmit;
+ refreshWriting();
      writingCheck.onclick=writingSubmit;
    };
  };
