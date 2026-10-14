@@ -24,6 +24,7 @@ jobs:
           node --check curriculum/a2-lessons.js
           node --check curriculum/a2-reading.js
           node --check curriculum/a2-dialogues.js
+          node --check curriculum/a2-exam.js
           python - <<'PY'
           from pathlib import Path
           import re
