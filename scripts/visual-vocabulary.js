@@ -116,6 +116,7 @@ function numberSection(){
  function render(){
   qInput.value="";qInput.disabled=false;waiting=false;qFeedback.textContent="";
   if(round===testNumbers.length){
+   waiting=false;
    qPrompt.textContent=tr("Completed: ","انتهى التدريب: ")+score+"/10";
    qInput.disabled=true;qPlay.disabled=true;qCheck.textContent=tr("Try again","أعد المحاولة");
    localStorage.setItem("lexoraNumbersBest",String(Math.max(score,Number(localStorage.getItem("lexoraNumbersBest")||"0"))));
