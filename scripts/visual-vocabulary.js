@@ -49,6 +49,23 @@ function numberSection(){
  sets.forEach((set,i)=>{const b=document.createElement("button");b.type="button";b.textContent=set.name;b.className=i===0?"active":"";b.onclick=()=>{current=set.items;search.value="";groups.querySelectorAll("button").forEach(x=>x.classList.toggle("active",x===b));draw(current)};groups.append(b)});
  search.oninput=()=>{const q=search.value.trim().toLocaleLowerCase("ru");draw(q?numbers.filter(x=>String(x.n).includes(q)||x.ru.includes(q)):current)};
  panel.append(title,expl,search,groups,list);
+ const usage=document.createElement("section");usage.className="numbers-usage";grid.append(usage);
+ const usageTitle=document.createElement("h3");usageTitle.textContent=tr("💬 Numbers in real life","💬 الأرقام في الحياة اليومية");usage.append(usageTitle);
+ const situations=[
+  {en:"Price",ar:"السعر",ru:"Сколько стоит? — Двадцать пять рублей.",meaningEn:"How much does it cost? — 25 rubles.",meaningAr:"بكام؟ — ٢٥ روبلًا."},
+  {en:"Time",ar:"الوقت",ru:"Сейчас десять часов.",meaningEn:"It is ten o'clock now.",meaningAr:"الساعة الآن العاشرة."},
+  {en:"Age",ar:"العمر",ru:"Мне двадцать лет.",meaningEn:"I am 20 years old.",meaningAr:"عمري ٢٠ سنة."},
+  {en:"Quantity",ar:"الكمية",ru:"У меня три книги.",meaningEn:"I have three books.",meaningAr:"عندي ثلاثة كتب."},
+  {en:"Phone number",ar:"رقم الهاتف",ru:"Мой номер: восемь, девять, два, ноль.",meaningEn:"My number: 8, 9, 2, 0 (practice example).",meaningAr:"رقمي: ٨، ٩، ٢، ٠ (مثال للتدريب)."}
+ ];
+ situations.forEach(item=>{
+  const row=document.createElement("article");row.className="numbers-situation";
+  const heading=document.createElement("strong");heading.textContent=tr(item.en,item.ar);
+  const russian=document.createElement("p");russian.lang="ru";russian.dir="ltr";russian.textContent=item.ru;
+  const meaning=document.createElement("p");meaning.textContent=tr(item.meaningEn,item.meaningAr);
+  row.append(heading,russian,meaning);usage.append(row);
+ });
+
  const quiz=document.createElement("section");quiz.className="numbers-quiz";grid.append(quiz);
  const qTitle=document.createElement("h3");qTitle.textContent=tr("🎯 Number Challenge","🎯 تحدي الأرقام");
  const qHelp=document.createElement("p");qHelp.textContent=tr("Read the number, then type it in Russian. Ten rounds.","اقرأ الرقم ثم اكتبه بالروسية. عشر جولات.");
