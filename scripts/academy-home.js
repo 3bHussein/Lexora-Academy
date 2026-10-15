@@ -143,11 +143,6 @@ function showAlphabet(){
  }
  writingCheck.onclick=writingSubmit;
  refreshWriting();
-     writingCheck.onclick=writingSubmit;
-   };
- };
- const writingSubmit=writingCheck.onclick;
- refreshWriting();
  const audio=document.createElement("section");audio.className="example";audio.innerHTML='<h3>🔊 أول جملة روسية</h3><p class="ru">Привет!</p><p>مرحبًا (غير رسمي)</p><button id="alphabetAudio">▶ استمع للصوت الطبيعي</button><p id="alphabetAudioFeedback" aria-live="polite"></p>';main.append(audio);
   audio.querySelector("#alphabetAudio").onclick=()=>{const src=window.LEXORA_AUDIO?.["Привет!"];if(!src){audio.querySelector("#alphabetAudioFeedback").textContent="التسجيل غير متوفر حاليًا";return}new Audio(src).play().catch(()=>{audio.querySelector("#alphabetAudioFeedback").textContent="تعذر تشغيل الصوت"})};
   if(!isArabic()){
