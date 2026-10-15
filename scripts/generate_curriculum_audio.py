@@ -23,6 +23,9 @@ def phrases():
     # Alphabet recordings read the letter name in a short phrase.
     letters=json.loads((ROOT/"curriculum/a1-alphabet.js").read_text(encoding="utf-8").split("=",1)[1].strip().rstrip(";"))
     return sorted(results),[item["letter"].split()[0] for item in letters]
+# Spoken Russian letter names, without the preceding word "Буква".
+# Ъ and Ь are signs, not independent phonemes; their conventional names are spoken.
+LETTER_NAMES=["а","бэ","вэ","гэ","дэ","е","ё","жэ","зэ","и","и краткое","ка","эль","эм","эн","о","пэ","эр","эс","тэ","у","эф","ха","цэ","че","ша","ща","твёрдый знак","ы","мягкий знак","э","ю","я"]
 async def main():
     phrases_list,letters=phrases()
     folder=ROOT/"audio/neural"
@@ -35,10 +38,11 @@ async def main():
             await edge_tts.Communicate(phrase,"ru-RU-SvetlanaNeural").save(str(path))
         manifest[phrase]="audio/neural/"+name
     alphabet={}
-    for i,letter in enumerate(letters,1):
-        path=folder/f"letter-{i:02d}.mp3"
+    assert len(letters)==len(LETTER_NAMES)==33
+    for i,(letter,spoken_name) in enumerate(zip(letters,LETTER_NAMES),1):
+        path=folder/f"letter-isolated-{i:02d}.mp3"
         if not path.exists() or path.stat().st_size<1000:
-            await edge_tts.Communicate("Буква "+letter+".","ru-RU-SvetlanaNeural").save(str(path))
+            await edge_tts.Communicate(spoken_name,"ru-RU-SvetlanaNeural").save(str(path))
         alphabet[letter]="audio/neural/"+path.name
     assert len(alphabet)==33
     for filename,var,items in [
