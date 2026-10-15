@@ -35,3 +35,16 @@ https://3bhussein.github.io/Lexora-Academy/
 Use **Languages & PTE** in the sidebar for German and Italian starter lessons and original PTE foundation practice. See [PLATFORM-PLAN.md](PLATFORM-PLAN.md) for delivered scope, limitations and the remaining platform roadmap. Existing Russian lessons and progress are preserved.
 
 Check the new studio with `node --test tests/expansion.test.cjs`.
+
+## Multilingual & PTE starter hub
+
+Open `academy.html` or use **Languages & PTE Hub** in the Russian classroom.
+Includes German and Italian first-conversation lessons, device-voice playback,
+PTE reading practice, written-summary form checks and model review, and a nine-task
+Speaking & Writing guide. Progress is browser-local and uses a separate key from
+Russian courses. This is starter content, not complete language curricula or an
+official Pearson mock/scoring service. Accounts, cloud sync, full PTE mocks,
+community and teacher tools remain planned.
+
+Test locally: serve this folder on port 4173, then run
+`npx playwright test tests/hub.spec.cjs --browser=chromium --workers=1`.

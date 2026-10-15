@@ -70,15 +70,15 @@ function numberSection(){
  }
  qPlay.onclick=()=>{const item=numbers.find(x=>x.n===testNumbers[round]);if(item)audio(item.ru,qPlay,qFeedback)};
  qCheck.onclick=()=>{
-  if(round===testNumbers.length){round=0;score=0;render();return}
   if(waiting){render();return}
+  if(round===testNumbers.length){round=0;score=0;render();return}
   const value=qInput.value.trim().toLocaleLowerCase("ru").replace(/\s+/g," ");
   if(!value){qFeedback.textContent=tr("Type an answer first.","اكتب الإجابة أولًا.");return}
   const expected=numbers.find(x=>x.n===testNumbers[round]).ru;
   if(value===expected){score++;qFeedback.textContent=tr("✓ Correct!","✓ إجابة صحيحة")}else{qFeedback.textContent=tr("Correct answer: ","الإجابة الصحيحة: ")+expected}
   round++;waiting=true;qInput.disabled=true;qCheck.textContent=tr("Next →","التالي ←");
  };
- render();update();
+ draw(current);render();update();
 }
 topics.filter(t=>t.id!=="numbers").forEach(topic=>{const tab=document.createElement("button");tab.type="button";tab.dataset.id=topic.id;tab.textContent=topic.icon+" "+(ar?topic.ar:topic.en);tab.onclick=()=>show(topic);menu.append(tab)});
 const numberTab=document.createElement("button");numberTab.type="button";numberTab.dataset.id="numbers-practice";numberTab.textContent=tr("🔢 Numbers Lab","🔢 مختبر الأرقام");numberTab.onclick=numberSection;menu.append(numberTab);
