@@ -9,7 +9,7 @@ from pathlib import Path
 import edge_tts
 
 ROOT=Path(__file__).resolve().parents[1]
-FILES=["curriculum/a1-alphabet.js","curriculum/visual-vocabulary.js","curriculum/a1-reading.js","curriculum/a2-lessons.js","curriculum/a2-reading.js","curriculum/a2-dialogues.js","curriculum/a2-listening.js"]
+FILES=["curriculum/a1-alphabet.js","curriculum/visual-vocabulary.js","curriculum/a1-reading.js","curriculum/a2-lessons.js","curriculum/a2-reading.js","curriculum/a2-dialogues.js","curriculum/a2-listening.js","curriculum/russian-numbers.js"]
 RU=re.compile(r"[А-Яа-яЁё]")
 def phrases():
     results=set()
