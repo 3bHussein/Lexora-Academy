@@ -66,6 +66,39 @@ function numberSection(){
   row.append(heading,russian,meaning);usage.append(row);
  });
 
+ const lifeQuiz=document.createElement("section");lifeQuiz.className="numbers-life-quiz";grid.append(lifeQuiz);
+ const lifeTitle=document.createElement("h3");lifeTitle.textContent=tr("🧩 Everyday Numbers Challenge","🧩 تحدي الأرقام اليومية");
+ const lifeHelp=document.createElement("p");lifeHelp.textContent=tr("Read the situation and choose the correct Russian expression.","اقرأ الموقف واختر التعبير الروسي الصحيح.");
+ const lifeStatus=document.createElement("p");lifeStatus.setAttribute("aria-live","polite");
+ const lifeChoices=document.createElement("div");lifeChoices.className="numbers-life-choices";
+ const lifeFeedback=document.createElement("p");lifeFeedback.setAttribute("aria-live","polite");
+ const lifeQuestions=[
+  {en:"What is the Russian for 'I am twenty years old'?",ar:"كيف تقول «عمري عشرون سنة» بالروسية؟",answer:"Мне двадцать лет.",choices:["Мне двадцать лет.","Сейчас десять часов.","У меня три книги."]},
+  {en:"How do you ask 'How much does it cost?'",ar:"كيف تسأل «كم السعر؟»",answer:"Сколько стоит?",choices:["Сколько стоит?","Который час?","Сколько тебе лет?"]},
+  {en:"How do you say 'It is ten o'clock now'?",ar:"كيف تقول «الساعة الآن العاشرة»؟",answer:"Сейчас десять часов.",choices:["Сейчас десять часов.","Мне десять лет.","Десять рублей."]},
+  {en:"How do you say 'I have three books'?",ar:"كيف تقول «لدي ثلاثة كتب»؟",answer:"У меня три книги.",choices:["У меня три книги.","У меня три рубля.","Мне три года."]},
+  {en:"How do you say 'twenty-five rubles'?",ar:"كيف تقول «خمسة وعشرون روبلًا»؟",answer:"Двадцать пять рублей.",choices:["Двадцать пять рублей.","Двадцать пять часов.","Двадцать пять лет."]}
+ ];
+ let lifeRound=0,lifeScore=0,lifeDone=false;
+ function lifeRender(){
+  lifeChoices.replaceChildren();lifeFeedback.textContent="";
+  if(lifeRound===lifeQuestions.length){
+   lifeDone=true;lifeStatus.textContent=tr("Completed: ","انتهى التدريب: ")+lifeScore+"/5";
+   localStorage.setItem("lexoraNumbersLifeBest",String(Math.max(lifeScore,Number(localStorage.getItem("lexoraNumbersLifeBest")||"0"))));
+   const again=document.createElement("button");again.type="button";again.textContent=tr("Try again","أعد المحاولة");again.onclick=()=>{lifeRound=0;lifeScore=0;lifeDone=false;lifeRender()};lifeChoices.append(again);return;
+  }
+  const q=lifeQuestions[lifeRound];lifeStatus.textContent=tr("Question ","السؤال ")+(lifeRound+1)+"/5 — "+tr(q.en,q.ar);
+  q.choices.forEach(choice=>{
+   const b=document.createElement("button");b.type="button";b.textContent=choice;b.lang="ru";b.dir="ltr";b.onclick=()=>{
+    if(lifeDone)return;
+    const correct=choice===q.answer;if(correct)lifeScore++;
+    lifeFeedback.textContent=correct?tr("✓ Correct!","✓ إجابة صحيحة"):tr("Correct answer: ","الإجابة الصحيحة: ")+q.answer;
+    lifeChoices.querySelectorAll("button").forEach(x=>x.disabled=true);
+    const next=document.createElement("button");next.type="button";next.textContent=tr("Next →","التالي ←");next.onclick=()=>{lifeRound++;lifeRender()};lifeChoices.append(next);
+   };lifeChoices.append(b);
+  });
+ }
+ lifeQuiz.append(lifeTitle,lifeHelp,lifeStatus,lifeChoices,lifeFeedback);lifeRender();
  const quiz=document.createElement("section");quiz.className="numbers-quiz";grid.append(quiz);
  const qTitle=document.createElement("h3");qTitle.textContent=tr("🎯 Number Challenge","🎯 تحدي الأرقام");
  const qHelp=document.createElement("p");qHelp.textContent=tr("Read the number, then type it in Russian. Ten rounds.","اقرأ الرقم ثم اكتبه بالروسية. عشر جولات.");
