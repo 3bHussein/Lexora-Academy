@@ -29,3 +29,9 @@ https://3bhussein.github.io/Lexora-Academy/
 5. Add automated tests, accessibility checks, and deployment gates.
 
 **Note:** Current progress is browser-local only. It does not sync across devices.
+
+## Multilingual studio and PTE foundations
+
+Use **Languages & PTE** in the sidebar for German and Italian starter lessons and original PTE foundation practice. See [PLATFORM-PLAN.md](PLATFORM-PLAN.md) for delivered scope, limitations and the remaining platform roadmap. Existing Russian lessons and progress are preserved.
+
+Check the new studio with `node --test tests/expansion.test.cjs`.
