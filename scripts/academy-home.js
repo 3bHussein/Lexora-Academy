@@ -105,7 +105,7 @@ function showAlphabet(){
  const writingFeedback=document.createElement("p");writingFeedback.setAttribute("aria-live","polite");
  writingQuiz.append(writingHeading,writingInfo,writingProgress,writingListen,writingInput,writingCheck,writingFeedback);main.append(writingQuiz);
  const writingLetters=window.LEXORA_ALPHABET.map(item=>item.letter.split(" ")[0]);
- let writingRound=0,writingScore=0;
+ let writingRound=0,writingScore=0,writingFinished=false;
  const normalizeLetter=x=>x.trim().normalize("NFC").toLocaleUpperCase("ru");
  const totalWriting=writingLetters.length;
  const writingLetterHint=document.createElement("p");writingLetterHint.className="meta";writingLetterHint.textContent=bi("Tip: type the Russian letter using a Cyrillic keyboard. Ь and Ъ are signs without independent sounds.","نصيحة: استخدم لوحة مفاتيح روسية لكتابة الحرف. Ь وЪ علامتان بلا صوت مستقل.");
@@ -114,6 +114,7 @@ function showAlphabet(){
  function refreshWriting(){
    writingInput.value="";writingInput.disabled=false;writingFeedback.textContent="";
    if(writingRound===totalWriting){
+     writingFinished=true;
      writingProgress.textContent=bi("Completed: ","انتهى التدريب: ")+writingScore+"/"+totalWriting;
      writingInput.disabled=true;writingListen.disabled=true;
      writingCheck.textContent=bi("Try again","أعد المحاولة");
@@ -131,7 +132,7 @@ function showAlphabet(){
    new Audio(src).play().catch(()=>{writingFeedback.textContent=bi("Could not play audio.","تعذر تشغيل الصوت")});
  };
  function writingSubmit(){
-   if(writingRound===totalWriting){refreshWriting();if(writingInput.disabled){writingRound=0;writingScore=0;refreshWriting()}return}
+   if(writingFinished){writingFinished=false;writingRound=0;writingScore=0;refreshWriting();return}
    if(writingInput.disabled){refreshWriting();return}
    const expected=writingLetters[writingRound];
    if(!writingInput.value.trim()){writingFeedback.textContent=bi("Type a letter first.","اكتب الحرف أولًا");return}
