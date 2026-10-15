@@ -465,3 +465,26 @@ test('Russian word dictation uses available MP3 and stores a ten-word score', as
  await expect(quiz).toContainText(/Completed: 10\/10|انتهى التدريب: 10\/10/);
  await expect.poll(()=>page.evaluate(()=>localStorage.getItem('lexoraWordDictationBest'))).toBe('10');
 });
+
+test('Numbers Lab supports 111 numbers, search and ten-round practice in English', async ({ page }) => {
+ await page.goto('http://127.0.0.1:4173/');
+ await page.evaluate(()=>localStorage.setItem('lexoraLanguage','en'));
+ await page.reload();
+ await page.locator('#vocabTab').click();
+ await page.getByRole('button',{name:/Numbers Lab/}).click();
+ await expect(page.locator('.numbers-lab')).toBeVisible();
+ await expect(page.locator('.numbers-list .vocab-card')).toHaveCount(11);
+ await page.getByRole('button',{name:'21–100'}).click();
+ await expect(page.locator('.numbers-list .vocab-card')).toHaveCount(80);
+ await page.locator('.numbers-lab input[type=search]').fill('99');
+ await expect(page.locator('.numbers-list')).toContainText('девяносто девять');
+ const quiz=page.locator('.numbers-quiz');
+ for(const word of ['ноль','семь','двенадцать','девятнадцать','двадцать','тридцать четыре','пятьдесят восемь','семьдесят шесть','сто','тысяча']){
+  await quiz.locator('input').fill(word);
+  await quiz.getByRole('button',{name:'Check answer'}).click();
+  await expect(quiz).toContainText('Correct!');
+  await quiz.getByRole('button',{name:'Next →'}).click();
+ }
+ await expect(quiz).toContainText('Completed: 10/10');
+ await expect.poll(()=>page.evaluate(()=>localStorage.getItem('lexoraNumbersBest'))).toBe('10');
+});
