@@ -127,7 +127,7 @@ function showAlphabet(){
    new Audio(src).play().catch(()=>{writingFeedback.textContent=bi("Could not play audio.","تعذر تشغيل الصوت")});
  };
  function writingSubmit(){
-   if(writingRound===writingLetters.length){writingRound=0;writingScore=0;refreshWriting();return}
+   if(writingRound===writingLetters.length){if(!writingInput.disabled){writingRound=0;writingScore=0;refreshWriting()}else{refreshWriting()}return}
    if(writingInput.disabled){refreshWriting();return}
    const expected=writingLetters[writingRound];
    if(!writingInput.value.trim()){writingFeedback.textContent=bi("Type a letter first.","اكتب الحرف أولًا");return}
