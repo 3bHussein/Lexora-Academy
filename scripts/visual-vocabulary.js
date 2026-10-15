@@ -63,7 +63,9 @@ function numberSection(){
   const heading=document.createElement("strong");heading.textContent=tr(item.en,item.ar);
   const russian=document.createElement("p");russian.lang="ru";russian.dir="ltr";russian.textContent=item.ru;
   const meaning=document.createElement("p");meaning.textContent=tr(item.meaningEn,item.meaningAr);
-  row.append(heading,russian,meaning);usage.append(row);
+  const listen=document.createElement("button");listen.type="button";listen.textContent=tr("🔊 Hear sentence","🔊 استمع للجملة");
+  listen.onclick=()=>audio(item.ru,listen,progress);
+  row.append(heading,russian,meaning,listen);usage.append(row);
  });
 
  const lifeQuiz=document.createElement("section");lifeQuiz.className="numbers-life-quiz";grid.append(lifeQuiz);
@@ -94,6 +96,7 @@ function numberSection(){
     const correct=choice===q.answer;if(correct)lifeScore++;
     lifeFeedback.textContent=correct?tr("✓ Correct!","✓ إجابة صحيحة"):tr("Correct answer: ","الإجابة الصحيحة: ")+q.answer;
     lifeChoices.querySelectorAll("button").forEach(x=>x.disabled=true);
+    const hearAnswer=document.createElement("button");hearAnswer.type="button";hearAnswer.textContent=tr("🔊 Hear correct answer","🔊 اسمع الإجابة الصحيحة");hearAnswer.onclick=()=>audio(q.answer,hearAnswer,lifeFeedback);lifeChoices.append(hearAnswer);
     const next=document.createElement("button");next.type="button";next.textContent=tr("Next →","التالي ←");next.onclick=()=>{lifeRound++;lifeRender()};lifeChoices.append(next);
    };lifeChoices.append(b);
   });
