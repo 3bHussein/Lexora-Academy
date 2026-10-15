@@ -104,12 +104,17 @@ function showAlphabet(){
  const writingCheck=document.createElement("button");writingCheck.type="button";writingCheck.textContent=bi("Check answer","تحقق من الإجابة");
  const writingFeedback=document.createElement("p");writingFeedback.setAttribute("aria-live","polite");
  writingQuiz.append(writingHeading,writingInfo,writingProgress,writingListen,writingInput,writingCheck,writingFeedback);main.append(writingQuiz);
- const writingLetters=["А","М","О","Т","К"];let writingRound=0,writingScore=0;
+ const writingLetters=window.LEXORA_ALPHABET.map(item=>item.letter.split(" ")[0]);
+ let writingRound=0,writingScore=0;
  const normalizeLetter=x=>x.trim().normalize("NFC").toLocaleUpperCase("ru");
+ const totalWriting=writingLetters.length;
+ const writingLetterHint=document.createElement("p");writingLetterHint.className="meta";writingLetterHint.textContent=bi("Tip: type the Russian letter using a Cyrillic keyboard. Ь and Ъ are signs without independent sounds.","نصيحة: استخدم لوحة مفاتيح روسية لكتابة الحرف. Ь وЪ علامتان بلا صوت مستقل.");
+ writingQuiz.insertBefore(writingLetterHint,writingInput);
+ writingInfo.textContent=bi("Listen to the letter name and type its Cyrillic symbol. Practice all 33 letters.","استمع إلى اسم الحرف واكتب رمزه الروسي. تدرب على الحروف الـ33.");
  function refreshWriting(){
    writingInput.value="";writingInput.disabled=false;writingFeedback.textContent="";
-   if(writingRound===writingLetters.length){
-     writingProgress.textContent=bi("Completed: ","انتهى التدريب: ")+writingScore+"/5";
+   if(writingRound===totalWriting){
+     writingProgress.textContent=bi("Completed: ","انتهى التدريب: ")+writingScore+"/"+totalWriting;
      writingInput.disabled=true;writingListen.disabled=true;
      writingCheck.textContent=bi("Try again","أعد المحاولة");
      const best=Number(localStorage.getItem("lexoraAlphabetWritingBest")||"0");
@@ -117,17 +122,16 @@ function showAlphabet(){
      return;
    }
    writingListen.disabled=false;
-   writingProgress.textContent=bi("Round ","الجولة ")+(writingRound+1)+"/5";
+   writingProgress.textContent=bi("Letter ","الحرف ")+(writingRound+1)+"/"+totalWriting;
    writingCheck.textContent=bi("Check answer","تحقق من الإجابة");
  }
  writingListen.onclick=()=>{
-   const key=writingLetters[writingRound];
-   const src=window.LEXORA_ALPHABET_AUDIO?.[key];
+   const src=window.LEXORA_ALPHABET_AUDIO?.[writingLetters[writingRound]];
    if(!src){writingFeedback.textContent=bi("Audio is being prepared.","التسجيل قيد التجهيز");return}
    new Audio(src).play().catch(()=>{writingFeedback.textContent=bi("Could not play audio.","تعذر تشغيل الصوت")});
  };
  function writingSubmit(){
-   if(writingRound===writingLetters.length){if(!writingInput.disabled){writingRound=0;writingScore=0;refreshWriting()}else{refreshWriting()}return}
+   if(writingRound===totalWriting){refreshWriting();if(writingInput.disabled){writingRound=0;writingScore=0;refreshWriting()}return}
    if(writingInput.disabled){refreshWriting();return}
    const expected=writingLetters[writingRound];
    if(!writingInput.value.trim()){writingFeedback.textContent=bi("Type a letter first.","اكتب الحرف أولًا");return}
@@ -136,7 +140,7 @@ function showAlphabet(){
    writingFeedback.textContent=correct?bi("✓ Correct!","✓ إجابة صحيحة"):bi("Correct letter: ","الحرف الصحيح: ")+expected;
    writingRound++;writingInput.disabled=true;
    writingCheck.textContent=bi("Next →","التالي ←");
-   if(writingRound===writingLetters.length){
+   if(writingRound===totalWriting){
      const best=Number(localStorage.getItem("lexoraAlphabetWritingBest")||"0");
      localStorage.setItem("lexoraAlphabetWritingBest",String(Math.max(best,writingScore)));
    }
