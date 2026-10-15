@@ -57,7 +57,7 @@ function showAlphabet(){
    const recording=window.LEXORA_ALPHABET_AUDIO?.[letterKey];
    playLetter.disabled=!recording;
    playLetter.title=recording?"":bi("Recording being prepared","التسجيل قيد الإعداد");
-   playLetter.textContent=recording?bi("🔊 Hear letter","🔊 استمع للحرف"):bi("Audio coming soon","الصوت قريبًا");
+   playLetter.textContent=recording?bi("🔊 Hear letter name","🔊 اسمع اسم الحرف"):bi("Audio coming soon","الصوت قريبًا");
    playLetter.onclick=recording?()=>new Audio(recording).play().catch(()=>{playLetter.textContent=bi("Audio unavailable","تعذر تشغيل الصوت")}):null;
   };
   updateAudio();window.addEventListener("lexora-audio-ready",updateAudio);
@@ -70,7 +70,7 @@ function showAlphabet(){
  const quizProgress=document.createElement("p");quizProgress.className="meta";quizProgress.setAttribute("aria-live","polite");
  const quizChoices=document.createElement("div");quizChoices.className="alphabet-quiz-choices";
  const quizFeedback=document.createElement("p");quizFeedback.setAttribute("aria-live","polite");
- const hear=document.createElement("button");hear.type="button";hear.textContent=bi("🔊 Play letter","🔊 اسمع الحرف");
+ const hear=document.createElement("button");hear.type="button";hear.textContent=bi("🔊 Play letter name","🔊 اسمع اسم الحرف");
  letterQuiz.append(quizTitle,quizHint,quizProgress,hear,quizChoices,quizFeedback);main.append(letterQuiz);
  const letters=window.LEXORA_ALPHABET.map(x=>x.letter.split(" ")[0]);let round=0,score=0,answer="";
  function newRound(){
