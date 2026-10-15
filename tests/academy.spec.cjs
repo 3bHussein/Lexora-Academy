@@ -471,7 +471,7 @@ test('Numbers Lab supports 111 numbers, search and ten-round practice in English
  await page.evaluate(()=>localStorage.setItem('lexoraLanguage','en'));
  await page.reload();
  await page.locator('#vocabTab').click();
- await page.getByRole('button',{name:/Numbers Lab/}).click();
+ await page.locator('.vocab-topics button[data-id="numbers-practice"]').click();
  await expect(page.locator('.numbers-lab')).toBeVisible();
  await expect(page.locator('.numbers-list .vocab-card')).toHaveCount(11);
  await page.getByRole('button',{name:'21–100'}).click();
