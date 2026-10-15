@@ -449,3 +449,19 @@ test('Cyrillic writing practice gives feedback and saves best score', async ({ p
  await expect(quiz).toContainText(/Completed|انتهى التدريب/);
  await expect.poll(()=>page.evaluate(()=>localStorage.getItem('lexoraAlphabetWritingBest'))).toBe('33');
 });
+
+test('Russian word dictation uses available MP3 and stores a ten-word score', async ({ page }) => {
+ await page.goto('http://127.0.0.1:4173/');
+ await page.locator('#alphabetTab').click();
+ const quiz=page.locator('.alphabet-dictation');
+ await expect(quiz).toBeVisible();
+ const words=['мама','папа','дом','вода','кошка','суп','нос','рука','окно','море'];
+ for(const word of words){
+   await quiz.locator('input').fill(word);
+   await quiz.getByRole('button',{name:/Check answer|تحقق من الإجابة/}).click();
+   await expect(quiz).toContainText(/Correct|صحيحة/);
+   await quiz.getByRole('button',{name:/Next|التالي/}).click();
+ }
+ await expect(quiz).toContainText(/Completed: 10\/10|انتهى التدريب: 10\/10/);
+ await expect.poll(()=>page.evaluate(()=>localStorage.getItem('lexoraWordDictationBest'))).toBe('10');
+});
