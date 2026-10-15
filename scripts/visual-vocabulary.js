@@ -134,6 +134,56 @@ function numberSection(){
  };
  draw(current);render();update();
 }
+function calendarSection(){
+ active("calendar");grid.replaceChildren();
+ const data=window.LEXORA_CALENDAR;if(!data)return;
+ const heading=document.createElement("section");heading.className="calendar-lab";grid.append(heading);
+ const h=document.createElement("h3");h.textContent=tr("📅 Days, Months & Dates","📅 الأيام والشهور والتواريخ");
+ const info=document.createElement("p");info.textContent=tr("Learn weekday and month names, then practise Russian dates. Dates use ordinal forms and often change the month to genitive.","تعلّم أيام الأسبوع والشهور ثم تدرب على التواريخ. تستخدم التواريخ صيغ الترتيب وغالبًا يأتي الشهر في حالة المضاف إليه.");
+ heading.append(h,info);
+ for(const [key,en,arabic] of [["days","Days of the week","أيام الأسبوع"],["months","Months of the year","شهور السنة"],["phrases","Useful date phrases","عبارات التواريخ"]]){
+  const title=document.createElement("h4");title.textContent=tr(en,arabic);heading.append(title);
+  const section=document.createElement("div");section.className="calendar-items";heading.append(section);
+  data[key].forEach(item=>section.append(card(item.ru,ar?item.ar:item.en,"calendar:"+item.ru)));
+ }
+ const quiz=document.createElement("section");quiz.className="calendar-quiz";grid.append(quiz);
+ const title=document.createElement("h3");title.textContent=tr("🎯 Calendar Challenge","🎯 تحدي التقويم");
+ const status=document.createElement("p");status.setAttribute("aria-live","polite");
+ const choices=document.createElement("div");choices.className="calendar-choices";
+ const feedback=document.createElement("p");feedback.setAttribute("aria-live","polite");
+ quiz.append(title,status,choices,feedback);
+ const questions=[
+  {en:"Monday",ar:"الاثنين",answer:"понедельник",choices:["понедельник","вторник","среда"]},
+  {en:"Friday",ar:"الجمعة",answer:"пятница",choices:["суббота","пятница","четверг"]},
+  {en:"Sunday",ar:"الأحد",answer:"воскресенье",choices:["воскресенье","вторник","среда"]},
+  {en:"January",ar:"يناير",answer:"январь",choices:["июнь","январь","июль"]},
+  {en:"March",ar:"مارس",answer:"март",choices:["май","март","август"]},
+  {en:"October",ar:"أكتوبر",answer:"октябрь",choices:["ноябрь","сентябрь","октябрь"]},
+  {en:"December",ar:"ديسمبر",answer:"декабрь",choices:["декабрь","февраль","апрель"]},
+  {en:"Today is Monday.",ar:"اليوم الاثنين.",answer:"Сегодня понедельник.",choices:["Сегодня понедельник.","Завтра вторник.","Сегодня первое января."]}
+ ];
+ let round=0,score=0;
+ function render(){
+  choices.replaceChildren();feedback.textContent="";
+  if(round===questions.length){
+   status.textContent=tr("Completed: ","انتهى التدريب: ")+score+"/"+questions.length;
+   localStorage.setItem("lexoraCalendarBest",String(Math.max(score,Number(localStorage.getItem("lexoraCalendarBest")||"0"))));
+   const retry=document.createElement("button");retry.type="button";retry.textContent=tr("Try again","أعد المحاولة");retry.onclick=()=>{round=0;score=0;render()};choices.append(retry);return;
+  }
+  const q=questions[round];status.textContent=tr("Question ","السؤال ")+(round+1)+"/"+questions.length+" — "+tr(q.en,q.ar);
+  q.choices.forEach(option=>{
+   const button=document.createElement("button");button.type="button";button.textContent=option;button.lang="ru";button.dir="ltr";
+   button.onclick=()=>{
+    if(option===q.answer)score++;
+    feedback.textContent=option===q.answer?tr("✓ Correct!","✓ إجابة صحيحة"):tr("Correct answer: ","الإجابة الصحيحة: ")+q.answer;
+    choices.querySelectorAll("button").forEach(b=>b.disabled=true);
+    const next=document.createElement("button");next.type="button";next.textContent=tr("Next →","التالي ←");next.onclick=()=>{round++;render()};choices.append(next);
+   };choices.append(button);
+  });
+ }
+ render();update();
+}
+const calendarTab=document.createElement("button");calendarTab.type="button";calendarTab.dataset.id="calendar";calendarTab.textContent=tr("📅 Calendar & Dates","📅 التقويم والتواريخ");calendarTab.onclick=calendarSection;menu.append(calendarTab);
 topics.filter(t=>t.id!=="numbers").forEach(topic=>{const tab=document.createElement("button");tab.type="button";tab.dataset.id=topic.id;tab.textContent=topic.icon+" "+(ar?topic.ar:topic.en);tab.onclick=()=>show(topic);menu.append(tab)});
 const numberTab=document.createElement("button");numberTab.type="button";numberTab.dataset.id="numbers-practice";numberTab.textContent=tr("🔢 Numbers Lab","🔢 مختبر الأرقام");numberTab.onclick=numberSection;menu.append(numberTab);
 const colors=topics.find(t=>t.id==="numbers");
