@@ -6,7 +6,7 @@ const tr=(en,arabic)=>ar?arabic:en;
 const main=document.getElementById("lesson");main.replaceChildren();document.getElementById("nav").replaceChildren();
 const heading=document.createElement("h2");heading.textContent=tr("🖼️ Russian Vocabulary by Topic","🖼️ مفردات روسية حسب الموضوع");main.append(heading);
 const topics=window.LEXORA_VISUAL_VOCAB||[],numbers=window.LEXORA_NUMBERS||[];
-const total=topics.reduce((n,t)=>n+t.words.length,0)+numbers.length;
+const total=topics.reduce((n,t)=>n+(t.id==="numbers"?t.words.filter(x=>!["один","два","три","десять"].includes(x[0])).length:t.words.length),0)+numbers.length;
 const intro=document.createElement("p");intro.textContent=tr("Learn vocabulary with natural Russian audio, number drills and saved progress.","تعلّم المفردات بالصوت الروسي الطبيعي وتدريبات الأرقام وحفظ التقدم.");main.append(intro);
 const menu=document.createElement("div");menu.className="vocab-topics";main.append(menu);
 const grid=document.createElement("div");grid.className="vocab-cards";main.append(grid);
