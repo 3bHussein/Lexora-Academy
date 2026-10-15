@@ -488,3 +488,21 @@ test('Numbers Lab supports 111 numbers, search and ten-round practice in English
  await expect(quiz).toContainText('Completed: 10/10');
  await expect.poll(()=>page.evaluate(()=>localStorage.getItem('lexoraNumbersBest'))).toBe('10');
 });
+
+test('Everyday Numbers Challenge works in English and stores progress', async ({ page }) => {
+ await page.goto('http://127.0.0.1:4173/');
+ await page.evaluate(()=>localStorage.setItem('lexoraLanguage','en'));
+ await page.reload();
+ await page.locator('#vocabTab').click();
+ await page.locator('.vocab-topics button[data-id="numbers-practice"]').click();
+ const quiz=page.locator('.numbers-life-quiz');
+ await expect(quiz).toBeVisible();
+ const answers=['Мне двадцать лет.','Сколько стоит?','Сейчас десять часов.','У меня три книги.','Двадцать пять рублей.'];
+ for(const answer of answers){
+   await quiz.locator('.numbers-life-choices button').filter({hasText:answer}).click();
+   await expect(quiz).toContainText('Correct!');
+   await quiz.getByRole('button',{name:'Next →'}).click();
+ }
+ await expect(quiz).toContainText('Completed: 5/5');
+ await expect.poll(()=>page.evaluate(()=>localStorage.getItem('lexoraNumbersLifeBest'))).toBe('5');
+});
