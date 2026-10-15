@@ -1,5 +1,5 @@
 const { test, expect } = require('@playwright/test');
-test.beforeEach(async ({ page }, testInfo) => { if (!testInfo.title.includes('English is the default language') && !testInfo.title.includes('English mode has no Arabic UI text') && !testInfo.title.includes('English LTR and Arabic RTL') && !testInfo.title.includes('alphabet recognition quiz works in English') && !testInfo.title.includes('Cyrillic writing practice gives feedback') && !testInfo.title.includes('Numbers Lab') && !testInfo.title.includes('Everyday Numbers Challenge')) await page.addInitScript(() => localStorage.setItem('lexoraLanguage','ar')); });
+test.beforeEach(async ({ page }, testInfo) => { if (!testInfo.title.includes('English is the default language') && !testInfo.title.includes('English mode has no Arabic UI text') && !testInfo.title.includes('English LTR and Arabic RTL') && !testInfo.title.includes('alphabet recognition quiz works in English') && !testInfo.title.includes('Cyrillic writing practice gives feedback') && !testInfo.title.includes('Numbers Lab') && !testInfo.title.includes('Everyday Numbers Challenge') && !testInfo.title.includes('Calendar & Dates')) await page.addInitScript(() => localStorage.setItem('lexoraLanguage','ar')); });
 test('lessons, answers, writing and reading work', async ({ page }) => {
   const errors = [];
   page.on('pageerror', error => errors.push(error.message));
@@ -520,4 +520,26 @@ test('Russian real-life number sentences have published neural MP3 recordings', 
   expect(response.ok(), 'Missing MP3 '+clips[i]).toBeTruthy();
   expect((await response.body()).length).toBeGreaterThan(1000);
  }
+});
+
+test('Calendar & Dates teaches days and months and saves eight-round quiz progress', async ({ page }) => {
+ await page.goto('http://127.0.0.1:4173/');
+ await page.evaluate(()=>localStorage.setItem('lexoraLanguage','en'));
+ await page.reload();
+ await page.locator('#vocabTab').click();
+ await page.locator('.vocab-topics button[data-id="calendar"]').click();
+ const calendar=page.locator('.calendar-lab');
+ await expect(calendar).toBeVisible();
+ await expect(calendar.locator('.calendar-items').nth(0).locator('.vocab-card')).toHaveCount(7);
+ await expect(calendar.locator('.calendar-items').nth(1).locator('.vocab-card')).toHaveCount(12);
+ const quiz=page.locator('.calendar-quiz');
+ for(const answer of ['понедельник','пятница','воскресенье','январь','март','октябрь','декабрь','Сегодня понедельник.']){
+  await quiz.locator('.calendar-choices button').filter({hasText:answer}).click();
+  await expect(quiz).toContainText('Correct!');
+  await quiz.getByRole('button',{name:'Next →'}).click();
+ }
+ await expect(quiz).toContainText('Completed: 8/8');
+ await expect.poll(()=>page.evaluate(()=>localStorage.getItem('lexoraCalendarBest'))).toBe('8');
+ await quiz.getByRole('button',{name:'Try again'}).click();
+ await expect(quiz).toContainText('Question 1/8');
 });
