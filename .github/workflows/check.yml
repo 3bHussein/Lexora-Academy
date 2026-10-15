@@ -31,6 +31,7 @@ jobs:
           node --check curriculum/a1-notes.js
           node --check curriculum/a1-alphabet.js
           node --check scripts/academy-home.js
+          node --check scripts/hub.js
           node --check curriculum/a1-reading.js
           node --check curriculum/a2-lessons.js
           node --check curriculum/a2-reading.js
@@ -74,4 +75,4 @@ jobs:
       - name: Browser interaction smoke test
         run: |
           python -m http.server 4173 --bind 127.0.0.1 >/tmp/lexora-http.log 2>&1 &
-          npx playwright test tests/academy.spec.cjs --browser=chromium --workers=1
+          npx playwright test tests/academy.spec.cjs tests/hub.spec.cjs --browser=chromium --workers=1
