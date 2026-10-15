@@ -72,7 +72,7 @@ function numberSection(){
  qCheck.onclick=()=>{
   if(round===testNumbers.length){round=0;score=0;render();return}
   if(waiting){render();return}
-  const value=qInput.value.trim().toLocaleLowerCase("ru").replace(/\\s+/g," ");
+  const value=qInput.value.trim().toLocaleLowerCase("ru").replace(/\s+/g," ");
   if(!value){qFeedback.textContent=tr("Type an answer first.","اكتب الإجابة أولًا.");return}
   const expected=numbers.find(x=>x.n===testNumbers[round]).ru;
   if(value===expected){score++;qFeedback.textContent=tr("✓ Correct!","✓ إجابة صحيحة")}else{qFeedback.textContent=tr("Correct answer: ","الإجابة الصحيحة: ")+expected}
