@@ -440,12 +440,12 @@ test('Cyrillic writing practice gives feedback and saves best score', async ({ p
  await page.locator('#alphabetTab').click();
  const quiz=page.locator('.alphabet-writing');
  await expect(quiz).toBeVisible();
- for(const letter of ['А','М','О','Т','К']){
+ for(const letter of ['А','Б','В','Г','Д','Е','Ё','Ж','З','И','Й','К','Л','М','Н','О','П','Р','С','Т','У','Ф','Х','Ц','Ч','Ш','Щ','Ъ','Ы','Ь','Э','Ю','Я']){
    await quiz.locator('input').fill(letter);
    await quiz.getByRole('button',{name:/Check answer|تحقق من الإجابة/}).click();
    await expect(quiz).toContainText(/Correct|صحيحة/);
    await quiz.getByRole('button',{name:/Next|التالي/}).click();
  }
  await expect(quiz).toContainText(/Completed|انتهى التدريب/);
- await expect.poll(()=>page.evaluate(()=>localStorage.getItem('lexoraAlphabetWritingBest'))).toBe('5');
+ await expect.poll(()=>page.evaluate(()=>localStorage.getItem('lexoraAlphabetWritingBest'))).toBe('33');
 });
