@@ -487,6 +487,9 @@ test('Numbers Lab supports 111 numbers, search and ten-round practice in English
  }
  await expect(quiz).toContainText('Completed: 10/10');
  await expect.poll(()=>page.evaluate(()=>localStorage.getItem('lexoraNumbersBest'))).toBe('10');
+ await quiz.getByRole('button',{name:'Try again'}).click();
+ await expect(quiz).toContainText('Round 1/10 — 0');
+ await expect(quiz.locator('input')).toBeEnabled();
 });
 
 test('Everyday Numbers Challenge works in English and stores progress', async ({ page }) => {
@@ -505,4 +508,16 @@ test('Everyday Numbers Challenge works in English and stores progress', async ({
  }
  await expect(quiz).toContainText('Completed: 5/5');
  await expect.poll(()=>page.evaluate(()=>localStorage.getItem('lexoraNumbersLifeBest'))).toBe('5');
+});
+
+test('Russian real-life number sentences have published neural MP3 recordings', async ({ page, request }) => {
+ await page.goto('http://127.0.0.1:4173/');
+ const sentences=['Сколько стоит? — Двадцать пять рублей.','Сейчас десять часов.','Мне двадцать лет.','У меня три книги.','Мой номер: восемь, девять, два, ноль.'];
+ const clips=await page.evaluate(phrases=>phrases.map(p=>window.LEXORA_CURRICULUM_AUDIO?.[p]||null),sentences);
+ for(let i=0;i<clips.length;i++){
+  expect(clips[i], 'Missing natural recording for '+sentences[i]).toBeTruthy();
+  const response=await request.get('http://127.0.0.1:4173/'+clips[i]);
+  expect(response.ok(), 'Missing MP3 '+clips[i]).toBeTruthy();
+  expect((await response.body()).length).toBeGreaterThan(1000);
+ }
 });
