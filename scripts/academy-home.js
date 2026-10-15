@@ -148,6 +148,45 @@ function showAlphabet(){
  }
  writingCheck.onclick=writingSubmit;
  refreshWriting();
+ const dictation=document.createElement("section");dictation.className="example alphabet-dictation";
+ const dictTitle=document.createElement("h3");dictTitle.textContent=bi("🎧 Listen & Write — Russian words","🎧 اسمع واكتب — كلمات روسية");
+ const dictIntro=document.createElement("p");dictIntro.textContent=bi("Listen to a Russian word and type what you hear. Complete 10 rounds.","استمع إلى كلمة روسية واكتب ما تسمعه. أكمل 10 جولات.");
+ const dictStatus=document.createElement("p");dictStatus.className="meta";dictStatus.setAttribute("aria-live","polite");
+ const dictPlay=document.createElement("button");dictPlay.type="button";dictPlay.textContent=bi("🔊 Play word","🔊 استمع للكلمة");
+ const dictInput=document.createElement("input");dictInput.type="text";dictInput.dir="ltr";dictInput.lang="ru";dictInput.autocomplete="off";dictInput.placeholder=bi("Type the Russian word","اكتب الكلمة الروسية");
+ const dictSubmit=document.createElement("button");dictSubmit.type="button";dictSubmit.textContent=bi("Check answer","تحقق من الإجابة");
+ const dictFeedback=document.createElement("p");dictFeedback.setAttribute("aria-live","polite");
+ dictation.append(dictTitle,dictIntro,dictStatus,dictPlay,dictInput,dictSubmit,dictFeedback);main.append(dictation);
+ const dictWords=["мама","папа","дом","вода","кошка","суп","нос","рука","окно","море"];
+ let dictRound=0,dictScore=0,dictFinished=false;
+ const dictNormalize=s=>s.trim().normalize("NFC").toLocaleLowerCase("ru").replace(/ё/g,"е");
+ function renderDictation(){
+  dictInput.value="";dictFeedback.textContent="";
+  dictFinished=dictRound===dictWords.length;
+  dictInput.disabled=dictFinished;dictPlay.disabled=dictFinished;
+  dictStatus.textContent=dictFinished?bi("Completed: ","انتهى التدريب: ")+dictScore+"/"+dictWords.length:bi("Word ","الكلمة ")+(dictRound+1)+"/"+dictWords.length;
+  dictSubmit.textContent=dictFinished?bi("Try again","أعد المحاولة"):bi("Check answer","تحقق من الإجابة");
+  if(dictFinished){
+   const best=Number(localStorage.getItem("lexoraWordDictationBest")||"0");
+   localStorage.setItem("lexoraWordDictationBest",String(Math.max(best,dictScore)));
+  }
+ }
+ dictPlay.onclick=()=>{
+  const word=dictWords[dictRound];const src=window.LEXORA_CURRICULUM_AUDIO?.[word];
+  if(!src){dictFeedback.textContent=bi("Recording unavailable.","التسجيل غير متاح");return}
+  new Audio(src).play().catch(()=>{dictFeedback.textContent=bi("Could not play audio.","تعذر تشغيل الصوت")});
+ };
+ dictSubmit.onclick=()=>{
+  if(dictFinished){dictRound=0;dictScore=0;renderDictation();return}
+  if(dictInput.disabled){renderDictation();return}
+  const value=dictInput.value.trim();if(!value){dictFeedback.textContent=bi("Type a word first.","اكتب كلمة أولًا");return}
+  const answer=dictWords[dictRound],correct=dictNormalize(value)===dictNormalize(answer);
+  if(correct)dictScore++;
+  dictFeedback.textContent=correct?bi("✓ Correct!","✓ إجابة صحيحة"):bi("Correct word: ","الكلمة الصحيحة: ")+answer;
+  dictRound++;dictInput.disabled=true;
+  dictSubmit.textContent=bi("Next →","التالي ←");
+ };
+ renderDictation();
  const audio=document.createElement("section");audio.className="example";audio.innerHTML='<h3>🔊 أول جملة روسية</h3><p class="ru">Привет!</p><p>مرحبًا (غير رسمي)</p><button id="alphabetAudio">▶ استمع للصوت الطبيعي</button><p id="alphabetAudioFeedback" aria-live="polite"></p>';main.append(audio);
   audio.querySelector("#alphabetAudio").onclick=()=>{const src=window.LEXORA_AUDIO?.["Привет!"];if(!src){audio.querySelector("#alphabetAudioFeedback").textContent="التسجيل غير متوفر حاليًا";return}new Audio(src).play().catch(()=>{audio.querySelector("#alphabetAudioFeedback").textContent="تعذر تشغيل الصوت"})};
   if(!isArabic()){
